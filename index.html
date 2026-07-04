@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DATA9001 A2 Reference Solution</title>
+<meta name="description" content="DATA9001 Assignment 2 reference solution, report, LaTeX source and R code.">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root {
+    --bg:#f7f7f2; --surface:#fff; --surface-2:#f1f5f3; --text:#18212a;
+    --muted:#5c6873; --border:#dfe5df; --accent:#0f766e; --accent-soft:#dff5f1;
+    --blue:#1d4ed8; --blue-soft:#dbeafe; --warn:#b45309; --warn-soft:#fff3d6;
+    --code-bg:#111827; --code-text:#f8fafc; --shadow:0 1px 3px rgba(15,23,42,.08);
+  }
+  [data-theme="dark"] {
+    --bg:#111418; --surface:#1b2027; --surface-2:#222a33; --text:#edf2f7;
+    --muted:#b5bec8; --border:#313b46; --accent:#5eead4; --accent-soft:#113b39;
+    --blue:#93c5fd; --blue-soft:#142d4d; --warn:#fbbf24; --warn-soft:#3f3014;
+    --code-bg:#090d14; --code-text:#f8fafc; --shadow:0 1px 3px rgba(0,0,0,.35);
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+    font-size:15px; line-height:1.72; color:var(--text); background:var(--bg); overflow-x:hidden;
+  }
+  code, pre { font-family:"SF Mono","Cascadia Code",Consolas,Menlo,monospace; }
+  header { background:var(--surface); border-bottom:1px solid var(--border); }
+  .header-inner { max-width:1240px; margin:0 auto; padding:24px 24px 0; }
+  .brand-row { display:flex; gap:16px; align-items:center; }
+  .logo { width:48px; height:48px; border-radius:8px; display:grid; place-items:center; background:var(--accent); color:white; font-weight:800; }
+  h1 { margin:0; font-size:22px; line-height:1.2; }
+  .subtitle { margin:4px 0 0; color:var(--muted); font-size:13px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .chip { color:var(--accent); background:var(--accent-soft); border-radius:4px; padding:1px 8px; font-size:12px; font-weight:800; font-family:"SF Mono",monospace; }
+  .header-actions { margin-left:auto; display:flex; gap:8px; }
+  .icon-btn { width:38px; height:38px; border:1px solid var(--border); border-radius:50%; background:var(--surface); color:var(--muted); cursor:pointer; }
+  .tabs { display:flex; gap:2px; margin-top:22px; overflow:auto hidden; scrollbar-width:thin; }
+  .tab { border:0; background:transparent; color:var(--muted); padding:10px 15px 12px; border-radius:6px 6px 0 0; font:inherit; font-size:13.5px; font-weight:650; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .toolbar { max-width:1240px; margin:0 auto; padding:18px 24px 0; }
+  .download-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .download-btn { display:inline-flex; align-items:center; gap:8px; min-height:36px; padding:8px 13px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none; font-size:13px; font-weight:650; }
+  .download-btn.primary { background:var(--accent); color:white; border-color:var(--accent); }
+  .layout { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:250px minmax(0,1fr); gap:36px; padding:28px 24px 48px; }
+  .view { display:none; }
+  .view.active { display:grid; }
+  nav.toc { position:sticky; top:20px; align-self:start; max-height:calc(100vh - 40px); overflow:auto; padding-right:6px; }
+  .toc-title { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; font-weight:800; margin:0 0 10px; }
+  .toc a { display:block; text-decoration:none; color:var(--muted); border-radius:5px; padding:6px 9px; font-size:13px; line-height:1.35; }
+  .toc a:hover, .toc a.active { background:var(--accent-soft); color:var(--accent); }
+  main { min-width:0; }
+  .notice { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+  .notice > div, .q-card, .panel { background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow); }
+  .notice > div { border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:14px 16px; }
+  .notice p { margin:0; color:var(--muted); font-size:13.5px; }
+  .q-card, .panel { border-radius:8px; padding:24px 28px; margin-bottom:18px; }
+  .q-head { display:flex; gap:14px; align-items:flex-start; border-bottom:1px solid var(--border); padding-bottom:14px; margin-bottom:18px; }
+  .q-chip { flex-shrink:0; background:var(--accent); color:white; border-radius:4px; padding:4px 9px; font-size:12px; font-weight:800; }
+  .q-head h2 { margin:0; font-size:20px; line-height:1.28; }
+  .q-head p { margin:4px 0 0; color:var(--muted); font-size:13.5px; }
+  .marks { margin-left:auto; flex-shrink:0; border:1px solid var(--border); color:var(--muted); background:var(--surface-2); border-radius:4px; padding:2px 8px; font-size:12px; font-weight:650; }
+  h2,h3 { scroll-margin-top:18px; }
+  h3 { margin:18px 0 8px; font-size:15.5px; }
+  table { width:100%; max-width:100%; border-collapse:collapse; margin:12px 0 16px; font-size:14px; display:block; overflow-x:auto; }
+  th,td { border:1px solid var(--border); text-align:left; padding:8px 10px; vertical-align:top; }
+  th { background:var(--accent-soft); color:var(--accent); font-weight:800; }
+  .math-block { background:var(--surface-2); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:0 6px 6px 0; padding:10px 14px; overflow-x:auto; }
+  .answer-line { background:var(--warn-soft); border-left:3px solid var(--warn); border-radius:0 6px 6px 0; padding:10px 14px; font-weight:700; margin:12px 0; }
+  .stat-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:12px 0 16px; }
+  .stat-grid div { background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px; }
+  .stat-grid span { display:block; color:var(--muted); font-size:12px; }
+  .stat-grid strong { display:block; font-size:19px; margin-top:2px; }
+  .pdf-frame { width:100%; min-height:78vh; border:1px solid var(--border); border-radius:8px; background:var(--surface); }
+  .code-panel { position:relative; background:var(--code-bg); color:var(--code-text); border-radius:8px; padding:18px; overflow:auto; line-height:1.6; font-size:13px; max-height:72vh; }
+  .code-panel code { color:inherit; white-space:pre; }
+  .copy { position:sticky; float:right; top:0; margin:-8px -8px 8px 12px; border:1px solid rgba(255,255,255,.22); color:white; background:rgba(255,255,255,.08); border-radius:5px; padding:5px 9px; cursor:pointer; font-size:12px; }
+  .source-grid { display:grid; grid-template-columns:280px minmax(0,1fr); gap:18px; }
+  .resource-list { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:18px; align-self:start; }
+  footer { background:var(--surface); border-top:1px solid var(--border); color:var(--muted); padding:30px 24px; }
+  footer .wrap { max-width:1240px; margin:0 auto; font-size:13px; }
+  @media (max-width:980px) { .layout { grid-template-columns:200px minmax(0,1fr); gap:22px; } .notice,.stat-grid,.source-grid { grid-template-columns:1fr; } }
+  @media (max-width:700px) { .layout,.view.active { display:block; padding:20px 16px 40px; } nav.toc { position:static; max-height:none; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:18px; } .q-card,.panel { padding:18px; } .q-head { display:block; } .marks { margin-left:8px; } .pdf-frame { min-height:62vh; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="logo" aria-hidden="true">A2</div>
+      <div>
+        <h1>DATA9001 Assignment 2 Reference Solution</h1>
+        <p class="subtitle"><span class="chip">DATA9001</span><span>Victoria apartment investment report</span><span>Term 2, 2026</span></p>
+      </div>
+      <div class="header-actions"><button class="icon-btn" id="theme-toggle" title="切换亮/暗模式">◐</button></div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-view="solutions" role="tab">网页答案</button>
+      <button class="tab" data-view="pdf" role="tab">PDF 原文</button>
+      <button class="tab" data-view="latex" role="tab">LaTeX 源码</button>
+      <button class="tab" data-view="code" role="tab">R 代码</button>
+      <button class="tab" data-view="data" role="tab">数据文件</button>
+    </div>
+  </div>
+</header>
+<div class="toolbar">
+  <div class="download-row">
+    <a class="download-btn primary" href="assets/reference-answer.pdf" download>下载 PDF</a>
+    <a class="download-btn" href="assets/reference-answer.tex" download>下载 LaTeX</a>
+    <a class="download-btn" href="assets/a2-analysis-code.R" download>下载 R 代码</a>
+    <a class="download-btn" href="assets/Apartment_prices.csv" download>下载价格数据</a>
+  </div>
+</div>
+
+<div class="layout view active" id="view-solutions">
+  <nav class="toc">
+    <p class="toc-title">Contents</p>
+    <a href="#read">阅读建议</a>
+    <a href="#clean">数据清洗</a>
+    <a href="#model">模型估计</a>
+    <a href="#interpret">模型解释</a>
+    <a href="#recommend">投资推荐</a>
+    <a href="#limits">限制与报告写法</a>
+  </nav>
+  <main>
+    <section class="notice" id="read">
+      <div><strong>怎么读</strong><p>先看每一步为什么做，再看代码怎么写。不要直接复制推荐 suburb，而要理解推荐标准。</p></div>
+      <div><strong>核心结论</strong><p>最高预测价格水平是 DROUIN；按投资上行空间和市场合理性，主推荐是 SEAFORD。</p></div>
+    </section>
+
+    <section class="q-card" id="clean">
+      <div class="q-head"><span class="q-chip">Data summary</span><div><h2>先把三个表合并并清洗错误输入</h2><p>清洗必须能被图和文字解释，而不是只藏在代码里。</p></div><span class="marks">5 marks</span></div>
+      <div class="stat-grid">
+        <div><span>合并后 suburbs</span><strong>458</strong></div>
+        <div><span>NORLANE price</span><strong>309,334</strong></div>
+        <div><span>负失业率修正</span><strong>22+22</strong></div>
+        <div><span>训练样本</span><strong>457</strong></div>
+      </div>
+      <table><thead><tr><th>问题</th><th>处理</th><th>理由</th></tr></thead><tbody>
+        <tr><td>NORLANE 的价格为 309334x</td><td>用 parse_number 提取 309334</td><td>数字部分清楚，是格式错误，不应整行删除</td></tr>
+        <tr><td>POINT LONSDALE 历史收入缺失</td><td>用历史收入中位数填补</td><td>只有一个缺失值，中位数稳健且容易解释</td></tr>
+        <tr><td>失业率出现负值</td><td>用 pmax(rate, 0) 修正为 0</td><td>失业率不能小于 0，保留“低失业”信息</td></tr>
+        <tr><td>MAFFRA = 4,202,660</td><td>训练回归时剔除</td><td>远高于第二高价格，会强烈拉动回归线</td></tr>
+      </tbody></table>
+    </section>
+
+    <section class="q-card" id="model">
+      <div class="q-head"><span class="q-chip">Model</span><div><h2>用历史特征估计 log price 线性模型</h2><p>Projected data 只用于预测下一年，不混入训练。</p></div><span class="marks">5 marks</span></div>
+      <div class="math-block">
+\[
+\log(Price_{2023})=\beta_0+\beta_1 PopulationGrowth+\beta_2 Income10k+\beta_3 UnemploymentClean+\beta_4 PriorityArea+\varepsilon
+\]
+      </div>
+      <p>模型的 \(R^2\) 约为 <strong>0.523</strong>，说明这四个历史特征解释了约 <strong>52.3%</strong> 的 suburb 间 log price 差异。</p>
+      <table><thead><tr><th>Variable</th><th>Coefficient</th><th>Std. err.</th><th>t</th><th>approx. p</th></tr></thead><tbody><tr><td>Intercept</td><td>11.333</td><td>0.080</td><td>140.89</td><td>0.0000</td></tr>
+<tr><td>Population growth</td><td>0.288</td><td>0.013</td><td>21.86</td><td>0.0000</td></tr>
+<tr><td>Income per \$10k</td><td>0.006</td><td>0.003</td><td>1.86</td><td>0.0628</td></tr>
+<tr><td>Cleaned unemployment</td><td>-0.036</td><td>0.004</td><td>-8.90</td><td>0.0000</td></tr>
+<tr><td>Priority growth area</td><td>0.380</td><td>0.035</td><td>10.74</td><td>0.0000</td></tr></tbody></table>
+    </section>
+
+    <section class="q-card" id="interpret">
+      <div class="q-head"><span class="q-chip">Interpretation</span><div><h2>解释系数时同时讲经济意义和统计意义</h2><p>不要只写 significant，也不要只写正负号。</p></div><span class="marks">5 marks</span></div>
+      <div class="math-block">
+\[
+e^{0.288}-1=33.4\%,\qquad e^{0.380}-1=46.2\%
+\]
+      </div>
+      <p>人口增长系数为正且证据很强，说明需求扩张与更高价格相关。清洗后失业率系数为负，说明劳动力市场较弱的 suburb 价格更低。Priority growth area 的系数对应约 46.2% 的价格溢价。收入方向为正，但统计证据较弱，报告里要诚实说明。</p>
+    </section>
+
+    <section class="q-card" id="recommend">
+      <div class="q-head"><span class="q-chip">Recommendation</span><div><h2>推荐前先说清楚 best 的标准</h2><p>价格水平和投资上行空间会给出不同排序。</p></div><span class="marks">decision</span></div>
+      <h3>按最高预测价格水平</h3>
+      <table><thead><tr><th>Suburb</th><th>Current price</th><th>Predicted 2024 price</th><th>Predicted uplift</th></tr></thead><tbody><tr><td>DROUIN</td><td>667,824</td><td>992,801</td><td>48.7%</td></tr>
+<tr><td>SEAFORD</td><td>490,411</td><td>951,068</td><td>93.9%</td></tr>
+<tr><td>SANDRINGHAM</td><td>577,191</td><td>928,143</td><td>60.8%</td></tr>
+<tr><td>ASHBURTON</td><td>630,872</td><td>903,269</td><td>43.2%</td></tr>
+<tr><td>BACCHUS MARSH</td><td>595,045</td><td>833,151</td><td>40.0%</td></tr></tbody></table>
+      <h3>按预测上行空间</h3>
+      <table><thead><tr><th>Suburb</th><th>Current price</th><th>Predicted 2024 price</th><th>Predicted uplift</th></tr></thead><tbody><tr><td>MONTROSE</td><td>67,157</td><td>245,452</td><td>265.5%</td></tr>
+<tr><td>WARRNAMBOOL</td><td>64,894</td><td>221,812</td><td>241.8%</td></tr>
+<tr><td>COBRAM</td><td>73,039</td><td>229,315</td><td>214.0%</td></tr>
+<tr><td>COLLINGWOOD</td><td>85,746</td><td>251,603</td><td>193.4%</td></tr>
+<tr><td>AIRPORT WEST</td><td>85,604</td><td>246,919</td><td>188.4%</td></tr>
+<tr><td>RYE</td><td>110,376</td><td>267,105</td><td>142.0%</td></tr>
+<tr><td>TEMPLESTOWE</td><td>112,749</td><td>269,466</td><td>139.0%</td></tr>
+<tr><td>IRYMPLE</td><td>116,905</td><td>263,180</td><td>125.1%</td></tr></tbody></table>
+      <div class="answer-line">主推荐：SEAFORD。它预测价格为 951,068，相对当前 490,411 的上行空间约 93.9%，且 projected population growth 约 8.86%。DROUIN 是最高预测价格水平的备选。</div>
+    </section>
+
+    <section class="q-card" id="limits">
+      <div class="q-head"><span class="q-chip">Report writing</span><div><h2>最后把技术过程压缩成 500 字报告</h2><p>正文讲逻辑，代码放附录。</p></div></div>
+      <p>Data summary 写合并、清洗和图形证据；Model Estimation 写函数关系和变量选择；Model interpretation 写系数方向、大小、证据、预测和推荐。限制要包括遗漏变量、线性假设、异方差风险、预测数据误差，以及相关不等于因果。</p>
+    </section>
+  </main>
+</div>
+
+<div class="layout view" id="view-pdf">
+  <nav class="toc"><p class="toc-title">PDF</p><a href="assets/reference-answer.pdf" target="_blank">新窗口打开</a></nav>
+  <main><iframe class="pdf-frame" src="assets/reference-answer.pdf" title="A2 reference answer PDF"></iframe></main>
+</div>
+
+<div class="layout view" id="view-latex">
+  <nav class="toc"><p class="toc-title">LaTeX</p><a href="assets/reference-answer.tex" download>下载源码</a></nav>
+  <main><section class="panel"><pre class="code-panel"><button class="copy" data-copy-target="latex-source">Copy</button><code id="latex-source">\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+
+\pgfplotsset{compat=1.18}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\setlength{\headheight}{13.6pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{DATA9001 -- Assignment 2}
+\rhead{Reference Solution}
+\cfoot{\thepage}
+
+\definecolor{navy}{HTML}{23395D}
+\definecolor{teal}{HTML}{2A9D8F}
+\definecolor{orange}{HTML}{C45824}
+\definecolor{codebg}{HTML}{F5F7FA}
+\lstdefinestyle{rcode}{
+    basicstyle=\ttfamily\scriptsize,
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{navy!30},
+    breaklines=true,
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    tabsize=2
+}
+
+\begin{document}
+
+\begin{center}
+{\Large DATA9001 Fundamentals of Data Science}\\[0.3em]
+{\large Assignment 2 Reference Solution}\\[0.3em]
+{\normalsize Victoria apartment investment recommendation}
+\end{center}
+
+\section*{Reference report}
+
+\subsection*{1) Data summary}
+The three datasets were merged by \texttt{Suburb\_name}. Each source file contained 458 suburbs, with no duplicate suburb names, and the inner join retained all 458 suburbs. Several data quality issues were corrected before modelling. In \texttt{Apartment\_prices.csv}, \texttt{NORLANE} had the value \texttt{309334x}, so the numeric part was parsed as 309,334. \texttt{POINT LONSDALE} had missing historical median income and was imputed using the historical income median. Unemployment rates cannot be negative, so 22 historical and 22 projected negative unemployment observations were capped at zero. The price distribution was strongly right-skewed. \texttt{MAFFRA} recorded a median apartment price of 4,202,660, far above the next highest suburb, so it was treated as an outlier and excluded from the regression training sample. The graphs below show the price distribution, the positive association between population growth and price, and the final predicted top suburbs.
+
+\subsection*{2) Model Estimation}
+I estimated the relationship between historical suburb characteristics and 2023 apartment prices with the following linear regression:
+\[
+\begin{aligned}
+\log(\text{Price}_{2023})=&amp;
+\beta_0+\beta_1\text{PopulationGrowth}+\beta_2\text{Income10k}\\
+&amp;+\beta_3\text{UnemploymentClean}+\beta_4\text{PriorityArea}+\varepsilon.
+\end{aligned}
+\]
+The dependent variable is log median apartment price. The log transformation is appropriate because prices are positive and right-skewed, and it makes coefficients interpretable as approximate percentage changes. \texttt{Income10k} equals median income divided by 10,000, so its coefficient describes the effect of an additional 10,000 dollars of income. The training sample contains 457 suburbs after excluding \texttt{MAFFRA}. The model has \(R^2=0.523\), so it explains about 52.3\% of the variation in log prices across suburbs.
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Variable &amp; Coef. &amp; Std. err. &amp; t &amp; approx. p \\
+\midrule
+Intercept &amp; 11.333 &amp; 0.080 &amp; 140.89 &amp; 0.0000 \\
+Population growth &amp; 0.288 &amp; 0.013 &amp; 21.86 &amp; 0.0000 \\
+Income per \$10k &amp; 0.006 &amp; 0.003 &amp; 1.86 &amp; 0.0628 \\
+Cleaned unemployment &amp; -0.036 &amp; 0.004 &amp; -8.90 &amp; 0.0000 \\
+Priority growth area &amp; 0.380 &amp; 0.035 &amp; 10.74 &amp; 0.0000 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{3) Model interpretation}
+Population growth is positive and statistically strong: a one percentage point increase in historical population growth is associated with about \(e^{0.288}-1=33.4\%\) higher prices, holding the other variables fixed. Cleaned unemployment is negative: a one percentage point increase in unemployment is associated with about 3.6\% lower prices. Priority growth area is also economically meaningful; the coefficient of 0.380 implies a predicted price premium of about \(e^{0.380}-1=46.2\%\). Income is positive but weaker statistically, so it should not be over-interpreted.
+
+Using the projected demographic data as next-year feature data, \texttt{DROUIN} has the highest predicted price level: 992,801 compared with its current 667,824, a predicted uplift of 48.7\%. However, I recommend \texttt{SEAFORD} as the stronger investment case. Its predicted price is 951,068, and its uplift from the current 490,411 is 93.9\%. It also has very high projected population growth of 8.86\%, so the recommendation is not based only on a low starting price. The model is limited by possible omitted variables such as transport, schools, development constraints and suburb amenities, and the regression should be interpreted as association rather than causal proof.
+
+\section*{Supporting graphs}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    width=0.92\textwidth,
+    height=6cm,
+    xlabel={2023 median apartment price bin},
+    ylabel={Number of suburbs},
+    symbolic x coords={0-100k,100-200k,200-300k,300-400k,400-500k,500-600k,600-700k,1m+},
+    xtick=data,
+    x tick label style={rotate=35,anchor=east},
+    ymin=0,
+    bar width=14pt,
+    nodes near coords,
+    nodes near coords style={font=\scriptsize},
+    fill=teal
+]
+\addplot table[x=bin,y=count] {assets/price_hist.dat};
+\end{axis}
+\end{tikzpicture}
+\caption{The price distribution is right-skewed and contains a clear extreme outlier above 1 million.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.92\textwidth,
+    height=6cm,
+    xlabel={Historical population growth},
+    ylabel={2023 median apartment price (thousand dollars)},
+    grid=major,
+    mark size=1pt,
+    only marks
+]
+\addplot+[only marks, mark=*, color=navy, opacity=0.45] table[x=pop_growth,y=price_k] {assets/scatter_data.dat};
+\end{axis}
+\end{tikzpicture}
+\caption{Suburbs with higher historical population growth tend to have higher apartment prices.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    xbar,
+    width=0.92\textwidth,
+    height=6cm,
+    xlabel={Predicted 2024 price (thousand dollars)},
+    ytick={0,1,2,3,4},
+    yticklabels={DROUIN,SEAFORD,SANDRINGHAM,ASHBURTON,BACCHUS MARSH},
+    xmin=0,
+    nodes near coords,
+    nodes near coords style={font=\scriptsize},
+    fill=orange
+]
+\addplot coordinates {
+(992.8,0)
+(951.1,1)
+(928.1,2)
+(903.3,3)
+(833.2,4)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Top predicted price levels show DROUIN first, while SEAFORD remains a strong recommendation because of its larger relative uplift.}
+\end{figure}
+
+\section*{Predicted ranking}
+
+\begin{tabular}{lrrr}
+\toprule
+Suburb &amp; Current price &amp; Predicted 2024 price &amp; Predicted uplift \\
+\midrule
+DROUIN &amp; 667,824 &amp; 992,801 &amp; 48.7\% \\
+SEAFORD &amp; 490,411 &amp; 951,068 &amp; 93.9\% \\
+SANDRINGHAM &amp; 577,191 &amp; 928,143 &amp; 60.8\% \\
+ASHBURTON &amp; 630,872 &amp; 903,269 &amp; 43.2\% \\
+BACCHUS MARSH &amp; 595,045 &amp; 833,151 &amp; 40.0\% \\
+\bottomrule
+\end{tabular}
+
+\section*{High-uplift candidates}
+
+\begin{tabular}{lrrr}
+\toprule
+Suburb &amp; Current price &amp; Predicted 2024 price &amp; Predicted uplift \\
+\midrule
+MONTROSE &amp; 67,157 &amp; 245,452 &amp; 265.5\% \\
+WARRNAMBOOL &amp; 64,894 &amp; 221,812 &amp; 241.8\% \\
+COBRAM &amp; 73,039 &amp; 229,315 &amp; 214.0\% \\
+COLLINGWOOD &amp; 85,746 &amp; 251,603 &amp; 193.4\% \\
+AIRPORT WEST &amp; 85,604 &amp; 246,919 &amp; 188.4\% \\
+RYE &amp; 110,376 &amp; 267,105 &amp; 142.0\% \\
+TEMPLESTOWE &amp; 112,749 &amp; 269,466 &amp; 139.0\% \\
+IRYMPLE &amp; 116,905 &amp; 263,180 &amp; 125.1\% \\
+\bottomrule
+\end{tabular}
+
+\section*{R code appendix}
+
+\lstinputlisting[style=rcode]{a2_analysis_code.R}
+
+\end{document}
+</code></pre></section></main>
+</div>
+
+<div class="layout view" id="view-code">
+  <nav class="toc"><p class="toc-title">R Code</p><a href="assets/a2-analysis-code.R" download>下载 R 文件</a></nav>
+  <main><section class="panel"><pre class="code-panel"><button class="copy" data-copy-target="r-source">Copy</button><code id="r-source">library(tidyverse)
+
+prices &lt;- read_csv(&quot;Data/Apartment_prices.csv&quot;, show_col_types = FALSE) %&gt;%
+  mutate(Median_price_2023 = parse_number(Median_price_2023))
+
+hist &lt;- read_csv(&quot;Data/Historical_demographic.csv&quot;, show_col_types = FALSE) %&gt;%
+  mutate(
+    Historical_median_income = replace_na(
+      Historical_median_income,
+      median(Historical_median_income, na.rm = TRUE)
+    ),
+    Historical_unemployment_rate_clean = pmax(Historical_unemployment_rate, 0)
+  )
+
+proj &lt;- read_csv(&quot;Data/Projected_demographic.csv&quot;, show_col_types = FALSE) %&gt;%
+  mutate(
+    Projected_median_income = replace_na(
+      Projected_median_income,
+      median(Projected_median_income, na.rm = TRUE)
+    ),
+    Projected_unemployment_rate_clean = pmax(Projected_unemployment_rate, 0)
+  )
+
+analysis_data &lt;- prices %&gt;%
+  inner_join(hist, by = &quot;Suburb_name&quot;)
+
+model_data &lt;- analysis_data %&gt;%
+  filter(Median_price_2023 &lt; 1000000) %&gt;%
+  mutate(
+    log_price = log(Median_price_2023),
+    income_10k = Historical_median_income / 10000
+  )
+
+ggplot(analysis_data, aes(x = Median_price_2023)) +
+  geom_histogram(bins = 30, fill = &quot;#2a9d8f&quot;, color = &quot;white&quot;) +
+  labs(
+    title = &quot;Distribution of 2023 median apartment prices&quot;,
+    x = &quot;Median apartment price in 2023&quot;,
+    y = &quot;Number of suburbs&quot;
+  ) +
+  theme_minimal()
+
+ggplot(model_data, aes(x = Historical_population_growth, y = Median_price_2023)) +
+  geom_point(alpha = 0.55, color = &quot;#23395d&quot;) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;#c45824&quot;) +
+  labs(
+    title = &quot;Population growth and apartment prices&quot;,
+    x = &quot;Historical population growth&quot;,
+    y = &quot;Median apartment price in 2023&quot;
+  ) +
+  theme_minimal()
+
+ggplot(model_data, aes(x = Historical_unemployment_rate_clean, y = Median_price_2023)) +
+  geom_point(alpha = 0.55, color = &quot;#23395d&quot;) +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE, color = &quot;#c45824&quot;) +
+  labs(
+    title = &quot;Unemployment and apartment prices&quot;,
+    x = &quot;Cleaned unemployment rate&quot;,
+    y = &quot;Median apartment price in 2023&quot;
+  ) +
+  theme_minimal()
+
+model &lt;- lm(
+  log_price ~ Historical_population_growth +
+    income_10k +
+    Historical_unemployment_rate_clean +
+    Historical_priority_growth_area,
+  data = model_data
+)
+
+summary(model)
+
+projection_input &lt;- proj %&gt;%
+  transmute(
+    Suburb_name,
+    Historical_population_growth = Projected_population_growth,
+    income_10k = Projected_median_income / 10000,
+    Historical_unemployment_rate_clean = Projected_unemployment_rate_clean,
+    Historical_priority_growth_area = Projected_priority_growth_area
+  )
+
+predictions &lt;- projection_input %&gt;%
+  mutate(
+    pred_log_price_2024 = predict(model, newdata = projection_input),
+    pred_price_2024 = exp(pred_log_price_2024)
+  ) %&gt;%
+  left_join(prices, by = &quot;Suburb_name&quot;) %&gt;%
+  mutate(
+    pred_uplift_abs = pred_price_2024 - Median_price_2023,
+    pred_uplift_pct = pred_price_2024 / Median_price_2023 - 1
+  )
+
+predictions %&gt;%
+  arrange(desc(pred_price_2024)) %&gt;%
+  select(Suburb_name, Median_price_2023, pred_price_2024, pred_uplift_pct) %&gt;%
+  head(10)
+
+predictions %&gt;%
+  filter(Median_price_2023 &lt; 1000000) %&gt;%
+  arrange(desc(pred_uplift_pct)) %&gt;%
+  select(Suburb_name, Median_price_2023, pred_price_2024, pred_uplift_pct) %&gt;%
+  head(15)
+
+top_predictions &lt;- predictions %&gt;%
+  filter(Suburb_name %in% c(&quot;DROUIN&quot;, &quot;SEAFORD&quot;, &quot;SANDRINGHAM&quot;, &quot;ASHBURTON&quot;, &quot;BACCHUS MARSH&quot;))
+
+ggplot(top_predictions, aes(x = reorder(Suburb_name, pred_price_2024), y = pred_price_2024)) +
+  geom_col(fill = &quot;#2a9d8f&quot;) +
+  coord_flip() +
+  labs(
+    title = &quot;Top predicted apartment prices for next year&quot;,
+    x = &quot;Suburb&quot;,
+    y = &quot;Predicted 2024 price&quot;
+  ) +
+  theme_minimal()
+</code></pre></section></main>
+</div>
+
+<div class="layout view" id="view-data">
+  <nav class="toc"><p class="toc-title">Data</p><a href="assets/Apartment_prices.csv">Apartment prices</a><a href="assets/Historical_demographic.csv">Historical demographic</a><a href="assets/Projected_demographic.csv">Projected demographic</a></nav>
+  <main><section class="panel source-grid"><div class="resource-list"><h3>下载资源</h3><ul><li><a href="assets/Apartment_prices.csv" download>Apartment_prices.csv</a></li><li><a href="assets/Historical_demographic.csv" download>Historical_demographic.csv</a></li><li><a href="assets/Projected_demographic.csv" download>Projected_demographic.csv</a></li></ul></div><div><h3>使用提醒</h3><p>Projected_demographic 是 next-year feature data。先用 historical features 和 2023 price 训练模型，再把 projected features 放入 predict。</p></div></section></main>
+</div>
+
+<footer><div class="wrap">DATA9001 A2 learning site. Built as a static GitHub Pages-compatible site with MathJax for formulas.</div></footer>
+
+<script>
+const root = document.documentElement;
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) root.dataset.theme = savedTheme;
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  root.dataset.theme = root.dataset.theme === 'dark' ? '' : 'dark';
+  localStorage.setItem('theme', root.dataset.theme || '');
+});
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-' + tab.dataset.view).classList.add('active');
+    if (window.MathJax?.typesetPromise) MathJax.typesetPromise();
+  });
+});
+document.querySelectorAll('.copy').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const target = document.getElementById(btn.dataset.copyTarget);
+    await navigator.clipboard.writeText(target.textContent);
+    const old = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => btn.textContent = old, 1000);
+  });
+});
+</script>
+</body>
+</html>
