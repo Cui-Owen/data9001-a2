@@ -2,7 +2,7 @@
 
 Static GitHub Pages site for Assignment 2 reference materials.
 
-Target Pages URL after publishing:
+Published Pages URL:
 
 https://cui-owen.github.io/data9001-a2/
 
@@ -10,10 +10,9 @@ Expected repository:
 
 https://github.com/Cui-Owen/data9001-a2
 
-Publish from this directory after GitHub authentication is restored:
+Republish from this directory after local content changes:
 
 ```bash
-gh auth login -h github.com
 ./publish_to_github_pages.sh
 ```
 

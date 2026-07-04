@@ -28,6 +28,22 @@ Date: 2026-07-04
 
 ## Publishing Notes
 
-This folder is ready to publish as a GitHub Pages static site. It includes `.nojekyll` so assets are served directly.
+This folder is published as a GitHub Pages static site. It includes `.nojekyll` so assets are served directly.
+
+Published URL:
+
+https://cui-owen.github.io/data9001-a2/
+
+Repository:
+
+https://github.com/Cui-Owen/data9001-a2
 
 The helper script `publish_to_github_pages.sh` checks GitHub CLI authentication, creates `Cui-Owen/data9001-a2` if needed, pushes `main`, and enables GitHub Pages from the repository root.
+
+Public access checks completed:
+
+- `index.html`: HTTP 200
+- `assets/reference-answer.pdf`: HTTP 200
+- `assets/reference-answer.tex`: HTTP 200
+- `assets/a2-analysis-code.R`: HTTP 200
+- `assets/Apartment_prices.csv`: HTTP 200
