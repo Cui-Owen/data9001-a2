@@ -30,3 +30,4 @@ Date: 2026-07-04
 
 This folder is ready to publish as a GitHub Pages static site. It includes `.nojekyll` so assets are served directly.
 
+The helper script `publish_to_github_pages.sh` checks GitHub CLI authentication, creates `Cui-Owen/data9001-a2` if needed, pushes `main`, and enables GitHub Pages from the repository root.
