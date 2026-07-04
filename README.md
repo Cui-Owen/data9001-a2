@@ -13,8 +13,8 @@ https://github.com/Cui-Owen/data9001-a2
 Publish from this directory after GitHub authentication is restored:
 
 ```bash
-git remote add origin https://github.com/Cui-Owen/data9001-a2.git
-git push -u origin main
+gh auth login -h github.com
+./publish_to_github_pages.sh
 ```
 
-Then enable GitHub Pages from the repository's `main` branch root.
+The script creates the public repository if needed, pushes the local `main` branch, and enables GitHub Pages from the repository root.
