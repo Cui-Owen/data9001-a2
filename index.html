@@ -32,6 +32,7 @@ window.MathJax = {
     margin:0; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
     font-size:15px; line-height:1.72; color:var(--text); background:var(--bg); overflow-x:hidden;
   }
+  a:focus-visible, button:focus-visible { outline:3px solid var(--blue-soft); outline-offset:2px; }
   code, pre { font-family:"SF Mono","Cascadia Code",Consolas,Menlo,monospace; }
   header { background:var(--surface); border-bottom:1px solid var(--border); }
   .header-inner { max-width:1240px; margin:0 auto; padding:24px 24px 0; }
@@ -84,10 +85,73 @@ window.MathJax = {
   .copy { position:sticky; float:right; top:0; margin:-8px -8px 8px 12px; border:1px solid rgba(255,255,255,.22); color:white; background:rgba(255,255,255,.08); border-radius:5px; padding:5px 9px; cursor:pointer; font-size:12px; }
   .source-grid { display:grid; grid-template-columns:280px minmax(0,1fr); gap:18px; }
   .resource-list { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:18px; align-self:start; }
+  .section-kicker { color:var(--accent); font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+  .panel h2 { margin:4px 0 6px; font-size:20px; line-height:1.25; }
+  .panel > p { margin:0 0 14px; color:var(--muted); }
+  .step-grid, .idea-grid, .data-card-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:14px; }
+  .step-link, .idea-item, .data-card {
+    border:1px solid var(--border); border-radius:8px; background:var(--surface-2); color:var(--text);
+    padding:12px; text-align:left; font:inherit;
+  }
+  .step-link { cursor:pointer; }
+  .step-link strong, .idea-item strong, .data-card strong { display:block; line-height:1.3; }
+  .step-link span, .idea-item span, .data-card span { display:block; color:var(--muted); font-size:13px; line-height:1.45; margin-top:4px; }
+  .panel-head { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; margin-bottom:12px; }
+  .panel-head h2 { margin:0; }
+  .panel-head p { margin:4px 0 0; color:var(--muted); }
+  .code-panel.flash { box-shadow:0 0 0 3px var(--blue-soft), var(--shadow); }
+  .data-card a { display:inline-flex; margin-top:10px; color:var(--accent); font-weight:700; text-decoration:none; }
+  .preview-block { margin-top:18px; }
+  .preview-block h3 { margin-bottom:4px; }
+  .preview-note { color:var(--muted); font-size:13px; margin:0 0 8px; }
+  .chart-demo { border:1px solid var(--border); border-radius:8px; padding:16px; margin-top:14px; background:var(--surface-2); }
+  .demo-title { display:flex; justify-content:space-between; gap:10px; margin-bottom:12px; font-weight:800; }
+  .demo-title span { color:var(--muted); font-size:12px; font-weight:700; }
+  .bar-row { display:grid; grid-template-columns:140px minmax(0,1fr) 70px; gap:10px; align-items:center; margin:8px 0; font-size:13px; }
+  .bar-track { height:12px; background:var(--surface); border:1px solid var(--border); border-radius:999px; overflow:hidden; }
+  .bar-track i { display:block; height:100%; background:var(--accent); border-radius:999px; }
+  .bar-row strong { text-align:right; font-size:12px; }
+  .quadrant-demo { position:relative; min-height:230px; border-left:2px solid var(--border); border-bottom:2px solid var(--border); margin:22px 14px 8px 26px; }
+  .quadrant-demo::before, .quadrant-demo::after { content:""; position:absolute; background:var(--border); opacity:.75; }
+  .quadrant-demo::before { left:46%; top:0; bottom:0; width:1px; }
+  .quadrant-demo::after { left:0; right:0; top:48%; height:1px; }
+  .dot { position:absolute; transform:translate(-50%,-50%); min-width:74px; padding:4px 7px; border-radius:999px; background:var(--surface); border:1px solid var(--accent); color:var(--accent); font-size:12px; font-weight:800; text-align:center; box-shadow:var(--shadow); }
+  .dot.recommend { background:var(--accent); color:white; }
+  .axis-label { position:absolute; color:var(--muted); font-size:12px; }
+  .axis-x { right:0; bottom:-28px; }
+  .axis-y { left:-24px; top:-20px; }
   footer { background:var(--surface); border-top:1px solid var(--border); color:var(--muted); padding:30px 24px; }
   footer .wrap { max-width:1240px; margin:0 auto; font-size:13px; }
-  @media (max-width:980px) { .layout { grid-template-columns:200px minmax(0,1fr); gap:22px; } .notice,.stat-grid,.source-grid { grid-template-columns:1fr; } }
-  @media (max-width:700px) { .layout,.view.active { display:block; padding:20px 16px 40px; } nav.toc { position:static; max-height:none; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:18px; } .q-card,.panel { padding:18px; } .q-head { display:block; } .marks { margin-left:8px; } .pdf-frame { min-height:62vh; } }
+  @media (max-width:980px) { .layout { grid-template-columns:200px minmax(0,1fr); gap:22px; } .notice,.stat-grid,.source-grid,.step-grid,.idea-grid,.data-card-grid { grid-template-columns:1fr; } }
+  @media (max-width:700px) {
+    .header-inner { padding:20px 16px 0; }
+    .brand-row { gap:12px; }
+    .logo { width:48px; height:48px; }
+    .header-actions { align-self:start; }
+    .tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:18px; overflow:visible; padding-bottom:14px; }
+    .tab { border:1px solid var(--border); border-radius:6px; padding:9px 8px; text-align:center; background:var(--surface-2); border-bottom-color:var(--border); }
+    .tab.active { background:var(--accent-soft); border-color:var(--accent); }
+    .toolbar { padding:14px 16px 0; }
+    .download-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .download-btn { justify-content:center; text-align:center; padding:8px 10px; }
+    .layout { padding:18px 16px 40px; }
+    .view { display:none; }
+    .view.active { display:block; }
+    nav.toc { position:static; max-height:none; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:18px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+    .toc-title { grid-column:1 / -1; margin-bottom:4px; }
+    .toc a { background:var(--surface-2); padding:7px 9px; }
+    .q-card,.panel { padding:18px; }
+    .q-head { display:block; }
+    .q-head h2, .panel h2 { font-size:18px; }
+    .q-chip { display:inline-block; margin-bottom:8px; }
+    .marks { display:inline-block; margin:10px 0 0; }
+    table { font-size:13px; }
+    .pdf-frame { min-height:62vh; }
+    .panel-head { display:block; }
+    .code-panel { max-height:64vh; padding:14px; font-size:12px; }
+    .bar-row { grid-template-columns:92px minmax(0,1fr) 56px; gap:8px; }
+    .quadrant-demo { min-height:210px; margin-left:18px; }
+  }
 </style>
 </head>
 <body>
@@ -99,14 +163,14 @@ window.MathJax = {
         <h1>Study Notes</h1>
         <p class="subtitle"><span class="chip">Q2</span><span>Applied analysis notes</span><span>2026</span></p>
       </div>
-      <div class="header-actions"><button class="icon-btn" id="theme-toggle" title="切换亮/暗模式">◐</button></div>
+      <div class="header-actions"><button class="icon-btn" id="theme-toggle" title="切换亮/暗模式" aria-label="切换亮暗模式">◐</button></div>
     </div>
     <div class="tabs" role="tablist">
-      <button class="tab active" data-view="solutions" role="tab">网页答案</button>
-      <button class="tab" data-view="pdf" role="tab">PDF 原文</button>
-      <button class="tab" data-view="latex" role="tab">LaTeX 源码</button>
-      <button class="tab" data-view="code" role="tab">R 代码</button>
-      <button class="tab" data-view="data" role="tab">数据文件</button>
+      <button class="tab active" id="tab-solutions" data-view="solutions" role="tab" aria-selected="true" aria-controls="view-solutions" tabindex="0">网页答案</button>
+      <button class="tab" id="tab-pdf" data-view="pdf" role="tab" aria-selected="false" aria-controls="view-pdf" tabindex="-1">PDF 原文</button>
+      <button class="tab" id="tab-latex" data-view="latex" role="tab" aria-selected="false" aria-controls="view-latex" tabindex="-1">LaTeX 源码</button>
+      <button class="tab" id="tab-code" data-view="code" role="tab" aria-selected="false" aria-controls="view-code" tabindex="-1">R 代码</button>
+      <button class="tab" id="tab-data" data-view="data" role="tab" aria-selected="false" aria-controls="view-data" tabindex="-1">数据文件</button>
     </div>
   </div>
 </header>
@@ -119,7 +183,7 @@ window.MathJax = {
   </div>
 </div>
 
-<div class="layout view active" id="view-solutions">
+<div class="layout view active" id="view-solutions" role="tabpanel" aria-labelledby="tab-solutions">
   <nav class="toc">
     <p class="toc-title">Contents</p>
     <a href="#read">阅读建议</a>
@@ -127,6 +191,7 @@ window.MathJax = {
     <a href="#model">模型估计</a>
     <a href="#interpret">模型解释</a>
     <a href="#recommend">投资推荐</a>
+    <a href="#charts">报告配图</a>
     <a href="#limits">限制与报告写法</a>
   </nav>
   <main>
@@ -196,6 +261,41 @@ e^{0.288}-1=33.4\%,\qquad e^{0.380}-1=46.2\%
       <div class="answer-line">主推荐：SEAFORD。它预测价格为 951,068，相对当前 490,411 的上行空间约 93.9%，且 projected population growth 约 8.86%。DROUIN 是最高预测价格水平的备选。</div>
     </section>
 
+    <section class="q-card" id="charts">
+      <div class="q-head"><span class="q-chip">Visual support</span><div><h2>还可以做哪些图来支持 report</h2><p>每张图都要回答一个报告问题：为什么清洗、为什么建模、为什么这样推荐。</p></div><span class="marks">ideas</span></div>
+      <div class="idea-grid">
+        <div class="idea-item"><strong>价格分布直方图</strong><span>支持 data summary：说明价格右偏、MAFFRA 是极端值，也解释为什么用 log price。</span></div>
+        <div class="idea-item"><strong>人口增长 vs 价格散点图</strong><span>支持 model estimation：展示人口增长和价格大致正相关，为纳入变量提供直观理由。</span></div>
+        <div class="idea-item"><strong>失业率 vs 价格散点图</strong><span>支持 model interpretation：展示劳动力市场弱的地区价格更低，和负系数互相印证。</span></div>
+        <div class="idea-item"><strong>系数图</strong><span>支持解释部分：把 coefficient 和置信区间画出来，比只放回归表更容易看出方向和不确定性。</span></div>
+        <div class="idea-item"><strong>当前价格 vs 预测价格哑铃图</strong><span>支持 recommendation：直接比较候选 suburb 的现价、预测价和差距。</span></div>
+        <div class="idea-item"><strong>上行空间 vs 当前价格象限图</strong><span>支持推荐标准：避免只选低价高百分比涨幅的 suburb，把价格水平和增长空间一起看。</span></div>
+      </div>
+
+      <div class="chart-demo" aria-label="Top predicted prices bar chart example">
+        <div class="demo-title">展示例 1：候选 suburb 预测价格比较 <span>bar chart</span></div>
+        <div class="bar-row"><span>DROUIN</span><div class="bar-track"><i style="width:100%"></i></div><strong>992.8k</strong></div>
+        <div class="bar-row"><span>SEAFORD</span><div class="bar-track"><i style="width:96%"></i></div><strong>951.1k</strong></div>
+        <div class="bar-row"><span>SANDRINGHAM</span><div class="bar-track"><i style="width:94%"></i></div><strong>928.1k</strong></div>
+        <div class="bar-row"><span>ASHBURTON</span><div class="bar-track"><i style="width:91%"></i></div><strong>903.3k</strong></div>
+        <div class="bar-row"><span>BACCHUS MARSH</span><div class="bar-track"><i style="width:84%"></i></div><strong>833.2k</strong></div>
+      </div>
+
+      <div class="chart-demo" aria-label="Investment screening quadrant example">
+        <div class="demo-title">展示例 2：上行空间和当前价格一起筛选 <span>quadrant</span></div>
+        <div class="quadrant-demo">
+          <span class="axis-label axis-y">uplift</span>
+          <span class="axis-label axis-x">current price</span>
+          <span class="dot recommend" style="left:62%;top:25%;">SEAFORD</span>
+          <span class="dot" style="left:84%;top:42%;">DROUIN</span>
+          <span class="dot" style="left:18%;top:15%;">MONTROSE</span>
+          <span class="dot" style="left:24%;top:22%;">COBRAM</span>
+          <span class="dot" style="left:72%;top:55%;">ASHBURTON</span>
+        </div>
+        <p class="preview-note">读图思路：左上角涨幅高但价格基数很低，可能是百分比放大；右上角同时有较高价格水平和较大上行空间，更适合写成稳健推荐。</p>
+      </div>
+    </section>
+
     <section class="q-card" id="limits">
       <div class="q-head"><span class="q-chip">Report writing</span><div><h2>最后把技术过程压缩成 500 字报告</h2><p>正文讲逻辑，代码放附录。</p></div></div>
       <p>Data summary 写合并、清洗和图形证据；Model Estimation 写函数关系和变量选择；Model interpretation 写系数方向、大小、证据、预测和推荐。限制要包括遗漏变量、线性假设、异方差风险、预测数据误差，以及相关不等于因果。</p>
@@ -203,14 +303,14 @@ e^{0.288}-1=33.4\%,\qquad e^{0.380}-1=46.2\%
   </main>
 </div>
 
-<div class="layout view" id="view-pdf">
+<div class="layout view" id="view-pdf" role="tabpanel" aria-labelledby="tab-pdf">
   <nav class="toc"><p class="toc-title">PDF</p><a href="assets/m01.pdf" target="_blank" rel="nofollow">新窗口打开</a></nav>
   <main><iframe class="pdf-frame" src="assets/m01.pdf" title="PDF notes"></iframe></main>
 </div>
 
-<div class="layout view" id="view-latex">
+<div class="layout view" id="view-latex" role="tabpanel" aria-labelledby="tab-latex">
   <nav class="toc"><p class="toc-title">LaTeX</p><a href="assets/m01.tex" download rel="nofollow">下载源码</a></nav>
-  <main><section class="panel"><pre class="code-panel"><button class="copy" data-copy-target="latex-source">Copy</button><code id="latex-source">\documentclass[11pt]{article}
+  <main><section class="panel"><pre class="code-panel" tabindex="0"><button class="copy" data-copy-target="latex-source">Copy</button><code id="latex-source">\documentclass[11pt]{article}
 
 \usepackage[a4paper,margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
@@ -980,9 +1080,25 @@ ggplot(top_predictions, aes(x = reorder(Suburb_name, pred_price_2024), y = pred_
 </code></pre></section></main>
 </div>
 
-<div class="layout view" id="view-code">
-  <nav class="toc"><p class="toc-title">R Code</p><a href="assets/m02.R" download rel="nofollow">下载 R 文件</a></nav>
-  <main><section class="panel"><pre class="code-panel"><button class="copy" data-copy-target="r-source">Copy</button><code id="r-source"># ============================================================
+<div class="layout view" id="view-code" role="tabpanel" aria-labelledby="tab-code">
+  <nav class="toc"><p class="toc-title">R Code</p><a href="#code-map">代码地图</a><a href="#r-code-block">完整代码</a><a href="assets/m02.R" download rel="nofollow">下载 R 文件</a></nav>
+  <main>
+    <section class="panel" id="code-map">
+      <div class="section-kicker">Code map</div>
+      <h2>从 report 结构读 R 代码</h2>
+      <p>先看每段代码对应报告的哪一部分，再看具体语法。下面按钮会跳到完整代码里的对应位置。</p>
+      <div class="step-grid">
+        <button class="step-link" data-code-find="读取并清洗公寓价格"><strong>1. 读取与清洗</strong><span>对应 Data summary：修正 NORLANE、缺失收入和负失业率。</span></button>
+        <button class="step-link" data-code-find="构造建模数据"><strong>2. 建模数据</strong><span>对应 Model estimation：排除 MAFFRA、建立 log price 和 income_10k。</span></button>
+        <button class="step-link" data-code-find="先可视化再建模"><strong>3. 图形检查</strong><span>对应 Data summary：用图证明右偏、离群点和变量关系。</span></button>
+        <button class="step-link" data-code-find="估计线性回归"><strong>4. 回归估计</strong><span>对应 Model interpretation：读取系数、标准误、t 值和 R²。</span></button>
+        <button class="step-link" data-code-find="预测下一年价格"><strong>5. 预测与排序</strong><span>对应 Recommendation：生成 pred_price_2024 和 pred_uplift_pct。</span></button>
+        <button class="step-link" data-code-find="可视化最终推荐"><strong>6. 推荐展示</strong><span>对应最终图表：把重点候选 suburb 做成可放进报告的图。</span></button>
+      </div>
+    </section>
+    <section class="panel" id="r-code-block">
+      <div class="panel-head"><div><h2>完整 R 代码</h2><p>保留了中文注释，适合按步骤改成自己的分析脚本。</p></div><a class="download-btn" href="assets/m02.R" download rel="nofollow">下载 R 文件</a></div>
+      <pre class="code-panel" tabindex="0"><button class="copy" data-copy-target="r-source">Copy</button><code id="r-source"># ============================================================
 # 数据分析示例代码
 # 思路：用&quot;历史特征&quot;训练一个线性回归模型，再把&quot;预测特征&quot;喂进模型，
 #       预测下一年各 suburb 的公寓价格，从而给出投资推荐。
@@ -1147,9 +1263,54 @@ ggplot(top_predictions, aes(x = reorder(Suburb_name, pred_price_2024), y = pred_
 </code></pre></section></main>
 </div>
 
-<div class="layout view" id="view-data">
-  <nav class="toc"><p class="toc-title">Data</p><a href="assets/d01.csv" rel="nofollow">Data 01</a><a href="assets/d02.csv" rel="nofollow">Data 02</a><a href="assets/d03.csv" rel="nofollow">Data 03</a></nav>
-  <main><section class="panel source-grid"><div class="resource-list"><h3>下载资源</h3><ul><li><a href="assets/d01.csv" download rel="nofollow">d01.csv</a></li><li><a href="assets/d02.csv" download rel="nofollow">d02.csv</a></li><li><a href="assets/d03.csv" download rel="nofollow">d03.csv</a></li></ul></div><div><h3>使用提醒</h3><p>d01 是价格表，d02 是历史特征，d03 是 next-year feature data。先用 historical features 和 2023 price 训练模型，再把 projected features 放入 predict。</p></div></section></main>
+<div class="layout view" id="view-data" role="tabpanel" aria-labelledby="tab-data">
+  <nav class="toc"><p class="toc-title">Data</p><a href="#data-guide">数据用途</a><a href="#data-preview">CSV 预览</a><a href="assets/d01.csv" rel="nofollow">d01</a><a href="assets/d02.csv" rel="nofollow">d02</a><a href="assets/d03.csv" rel="nofollow">d03</a></nav>
+  <main>
+    <section class="panel" id="data-guide">
+      <div class="section-kicker">Dataset guide</div>
+      <h2>三个数据文件分别怎么用</h2>
+      <p>d01 提供 2023 price，d02 提供 historical features，d03 提供 projected next-year features。训练时只用 d01+d02，预测时才把 d03 放进模型。</p>
+      <div class="data-card-grid">
+        <div class="data-card"><strong>d01.csv</strong><span>价格表。关键列是 Suburb_name 和 Median_price_2023，是模型的被解释变量。</span><a href="assets/d01.csv" download rel="nofollow">下载 d01</a></div>
+        <div class="data-card"><strong>d02.csv</strong><span>历史人口与经济特征。用于训练回归模型，包含人口增长、收入、失业率和 priority growth area。</span><a href="assets/d02.csv" download rel="nofollow">下载 d02</a></div>
+        <div class="data-card"><strong>d03.csv</strong><span>下一年预测特征。不能混入训练，只能在 predict 阶段改名成训练变量口径后使用。</span><a href="assets/d03.csv" download rel="nofollow">下载 d03</a></div>
+      </div>
+    </section>
+
+    <section class="panel" id="data-preview">
+      <div class="panel-head"><div><h2>CSV 快速预览</h2><p>先看列名和取值形态，再决定清洗、合并和建模步骤。</p></div></div>
+      <div class="preview-block">
+        <h3>d01.csv price table</h3>
+        <p class="preview-note">用于训练标签：Median_price_2023。</p>
+        <table><thead><tr><th>Suburb_name</th><th>Median_price_2023</th></tr></thead><tbody>
+          <tr><td>KYNETON</td><td>206166</td></tr>
+          <tr><td>INVERLOCH</td><td>416794</td></tr>
+          <tr><td>DINNER PLAIN</td><td>147057</td></tr>
+          <tr><td>SORRENTO</td><td>391528</td></tr>
+        </tbody></table>
+      </div>
+      <div class="preview-block">
+        <h3>d02.csv historical features</h3>
+        <p class="preview-note">用于训练解释变量：历史人口增长、收入、失业率和 priority area。</p>
+        <table><thead><tr><th>Suburb_name</th><th>Population growth</th><th>Income</th><th>Unemployment</th><th>Priority</th></tr></thead><tbody>
+          <tr><td>KYNETON</td><td>3.24</td><td>94327</td><td>0.42</td><td>0</td></tr>
+          <tr><td>INVERLOCH</td><td>4.43</td><td>135279</td><td>2.83</td><td>0</td></tr>
+          <tr><td>DINNER PLAIN</td><td>4.57</td><td>126613</td><td>9.04</td><td>0</td></tr>
+          <tr><td>SORRENTO</td><td>6.55</td><td>132536</td><td>5.34</td><td>0</td></tr>
+        </tbody></table>
+      </div>
+      <div class="preview-block">
+        <h3>d03.csv projected features</h3>
+        <p class="preview-note">用于预测输入：列名要映射到训练模型使用的变量名。</p>
+        <table><thead><tr><th>Suburb_name</th><th>Projected growth</th><th>Projected income</th><th>Projected unemployment</th><th>Projected priority</th></tr></thead><tbody>
+          <tr><td>KYNETON</td><td>3.3002</td><td>98290.53</td><td>0.4166</td><td>0</td></tr>
+          <tr><td>INVERLOCH</td><td>4.4949</td><td>140999.71</td><td>2.8634</td><td>0</td></tr>
+          <tr><td>DINNER PLAIN</td><td>4.7154</td><td>132956.39</td><td>9.3011</td><td>0</td></tr>
+          <tr><td>SORRENTO</td><td>6.8414</td><td>139719.30</td><td>5.5057</td><td>0</td></tr>
+        </tbody></table>
+      </div>
+    </section>
+  </main>
 </div>
 
 <footer><div class="wrap">Study notes. Static page bundle with MathJax formula rendering.</div></footer>
@@ -1158,28 +1319,118 @@ ggplot(top_predictions, aes(x = reorder(Suburb_name, pred_price_2024), y = pred_
 const root = document.documentElement;
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme) root.dataset.theme = savedTheme;
-document.getElementById('theme-toggle').addEventListener('click', () => {
+const themeToggle = document.getElementById('theme-toggle');
+const syncThemeButton = () => {
+  const isDark = root.dataset.theme === 'dark';
+  themeToggle.setAttribute('aria-pressed', String(isDark));
+  themeToggle.textContent = isDark ? '☀' : '◐';
+};
+syncThemeButton();
+themeToggle.addEventListener('click', () => {
   root.dataset.theme = root.dataset.theme === 'dark' ? '' : 'dark';
   localStorage.setItem('theme', root.dataset.theme || '');
+  syncThemeButton();
 });
-document.querySelectorAll('.tab').forEach(tab => {
+
+const tabs = Array.from(document.querySelectorAll('.tab'));
+const views = Array.from(document.querySelectorAll('.view'));
+const activateTab = (tab, options = {}) => {
+  tabs.forEach(t => {
+    const active = t === tab;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-selected', String(active));
+    t.tabIndex = active ? 0 : -1;
+  });
+  views.forEach(view => {
+    const active = view.id === 'view-' + tab.dataset.view;
+    view.classList.toggle('active', active);
+    view.setAttribute('aria-hidden', String(!active));
+  });
+  if (options.focus) tab.focus();
+  if (options.hash) history.replaceState(null, '', '#' + tab.dataset.view);
+  if (window.MathJax?.typesetPromise) MathJax.typesetPromise();
+};
+
+tabs.forEach((tab, index) => {
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('view-' + tab.dataset.view).classList.add('active');
-    if (window.MathJax?.typesetPromise) MathJax.typesetPromise();
+    activateTab(tab, { hash: true });
+  });
+  tab.addEventListener('keydown', event => {
+    const key = event.key;
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) return;
+    event.preventDefault();
+    let nextIndex = index;
+    if (key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+    if (key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+    if (key === 'Home') nextIndex = 0;
+    if (key === 'End') nextIndex = tabs.length - 1;
+    activateTab(tabs[nextIndex], { focus: true, hash: true });
   });
 });
+
+const syncHashToView = () => {
+  const hashValue = location.hash.replace('#', '').replace('view-', '');
+  const hashTab = tabs.find(tab => tab.dataset.view === hashValue);
+  if (hashTab) {
+    activateTab(hashTab);
+    return;
+  }
+  const target = hashValue ? document.getElementById(hashValue) : null;
+  const targetView = target?.closest('.view');
+  const targetTab = targetView ? tabs.find(tab => targetView.id === 'view-' + tab.dataset.view) : null;
+  activateTab(targetTab || tabs.find(tab => tab.classList.contains('active')));
+  if (target && targetTab) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+};
+syncHashToView();
+window.addEventListener('hashchange', syncHashToView);
+
 document.querySelectorAll('.copy').forEach(btn => {
   btn.addEventListener('click', async () => {
     const target = document.getElementById(btn.dataset.copyTarget);
-    await navigator.clipboard.writeText(target.textContent);
     const old = btn.textContent;
-    btn.textContent = 'Copied';
+    try {
+      await navigator.clipboard.writeText(target.textContent);
+      btn.textContent = 'Copied';
+    } catch {
+      btn.textContent = 'Copy failed';
+    }
     setTimeout(() => btn.textContent = old, 1000);
   });
 });
+
+document.querySelectorAll('[data-code-find]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const code = document.getElementById('r-source');
+    const panel = code.closest('.code-panel');
+    const text = code.textContent;
+    const index = text.indexOf(btn.dataset.codeFind);
+    if (index < 0) return;
+    const line = text.slice(0, index).split('\n').length;
+    const totalLines = text.split('\n').length;
+    panel.scrollTop = Math.max(0, ((line - 3) / totalLines) * panel.scrollHeight);
+    panel.classList.add('flash');
+    panel.focus({ preventScroll: true });
+    setTimeout(() => panel.classList.remove('flash'), 900);
+  });
+});
+
+const solutionTocLinks = Array.from(document.querySelectorAll('#view-solutions .toc a[href^="#"]'));
+const solutionSections = solutionTocLinks
+  .map(link => document.querySelector(link.getAttribute('href')))
+  .filter(Boolean);
+const updateToc = () => {
+  if (!document.getElementById('view-solutions').classList.contains('active')) return;
+  let current = solutionSections[0];
+  solutionSections.forEach(section => {
+    if (section.getBoundingClientRect().top <= 140) current = section;
+  });
+  solutionTocLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current.id);
+  });
+};
+window.addEventListener('scroll', updateToc, { passive: true });
+window.addEventListener('resize', updateToc);
+updateToc();
 </script>
 </body>
 </html>
