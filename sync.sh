@@ -5,6 +5,7 @@ OWNER="Cui-Owen"
 REPO="data9001-a2"
 FULL_NAME="$OWNER/$REPO"
 PAGES_URL="https://cui-owen.github.io/data9001-a2/"
+DESCRIPTION="Static notes bundle"
 
 if ! command -v gh >/dev/null 2>&1; then
   echo "GitHub CLI is required. Install gh first."
@@ -18,7 +19,7 @@ if ! gh auth status >/dev/null 2>&1; then
 fi
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "Run this script from the a2_reference_site git repository."
+  echo "Run this script from this git repository."
   exit 1
 fi
 
@@ -34,8 +35,13 @@ if gh repo view "$FULL_NAME" >/dev/null 2>&1; then
   echo "Repository $FULL_NAME already exists."
 else
   echo "Creating public repository $FULL_NAME."
-  gh repo create "$FULL_NAME" --public --description "DATA9001 Assignment 2 reference solution site"
+  gh repo create "$FULL_NAME" --public --description "$DESCRIPTION"
 fi
+
+gh api --method PATCH "repos/$FULL_NAME" \
+  -f "description=$DESCRIPTION" \
+  -F "has_wiki=false" \
+  >/dev/null
 
 REMOTE_URL="https://github.com/$FULL_NAME.git"
 if git remote get-url origin >/dev/null 2>&1; then

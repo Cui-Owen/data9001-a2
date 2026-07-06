@@ -18,8 +18,8 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{DATA9001 -- Assignment 2}
-\rhead{Reference Solution}
+\lhead{Applied Data Analysis}
+\rhead{Worked Notes}
 \cfoot{\thepage}
 
 \definecolor{navy}{HTML}{23395D}
@@ -41,15 +41,15 @@
 \begin{document}
 
 \begin{center}
-{\Large DATA9001 Fundamentals of Data Science}\\[0.3em]
-{\large Assignment 2 Reference Solution}\\[0.3em]
+{\Large Applied Data Analysis}\\[0.3em]
+{\large Worked Notes}\\[0.3em]
 {\normalsize Victoria apartment investment recommendation}
 \end{center}
 
-\section*{Reference report}
+\section*{Worked report}
 
 \subsection*{1) Data summary}
-The three datasets were merged by \texttt{Suburb\_name}. Each source file contained 458 suburbs, with no duplicate suburb names, and the inner join retained all 458 suburbs, so no rows were lost in the merge. Several data quality issues were then corrected before modelling. In \texttt{Apartment\_prices.csv}, \texttt{NORLANE} had the value \texttt{309334x}, so the numeric part was parsed as 309,334 rather than deleting an otherwise valid row. \texttt{POINT LONSDALE} had missing historical median income and was imputed using the historical income median, which is robust to skew; no other column contained missing values. Unemployment rates cannot be negative, so 22 historical and 22 projected negative observations were capped at zero, preserving the low-unemployment signal. The price histogram below made the strong right skew and one extreme value obvious: \texttt{MAFFRA} recorded a median apartment price of 4,202,660, far above the next highest suburb, so it was treated as an outlier and excluded from the regression training sample. The remaining graphs show the positive association between population growth and price, and the final predicted top suburbs.
+The three datasets were merged by \texttt{Suburb\_name}. Each source file contained 458 suburbs, with no duplicate suburb names, and the inner join retained all 458 suburbs, so no rows were lost in the merge. Several data quality issues were then corrected before modelling. In \texttt{d01.csv}, \texttt{NORLANE} had the value \texttt{309334x}, so the numeric part was parsed as 309,334 rather than deleting an otherwise valid row. \texttt{POINT LONSDALE} had missing historical median income and was imputed using the historical income median, which is robust to skew; no other column contained missing values. Unemployment rates cannot be negative, so 22 historical and 22 projected negative observations were capped at zero, preserving the low-unemployment signal. The price histogram below made the strong right skew and one extreme value obvious: \texttt{MAFFRA} recorded a median apartment price of 4,202,660, far above the next highest suburb, so it was treated as an outlier and excluded from the regression training sample. The remaining graphs show the positive association between population growth and price, and the final predicted top suburbs.
 
 \subsection*{2) Model Estimation}
 I estimated the relationship between historical suburb characteristics and 2023 apartment prices with the following linear regression:
@@ -648,10 +648,10 @@ IRYMPLE & 116,905 & 263,180 & 125.1\% \\
 \begin{lstlisting}[style=rcode]
 library(tidyverse)
 
-prices <- read_csv("Data/Apartment_prices.csv", show_col_types = FALSE) %>%
+prices <- read_csv("Data/d01.csv", show_col_types = FALSE) %>%
   mutate(Median_price_2023 = parse_number(Median_price_2023))
 
-hist <- read_csv("Data/Historical_demographic.csv", show_col_types = FALSE) %>%
+hist <- read_csv("Data/d02.csv", show_col_types = FALSE) %>%
   mutate(
     Historical_median_income = replace_na(
       Historical_median_income,
@@ -660,7 +660,7 @@ hist <- read_csv("Data/Historical_demographic.csv", show_col_types = FALSE) %>%
     Historical_unemployment_rate_clean = pmax(Historical_unemployment_rate, 0)
   )
 
-proj <- read_csv("Data/Projected_demographic.csv", show_col_types = FALSE) %>%
+proj <- read_csv("Data/d03.csv", show_col_types = FALSE) %>%
   mutate(
     Projected_median_income = replace_na(
       Projected_median_income,

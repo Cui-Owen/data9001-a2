@@ -1,5 +1,5 @@
 # ============================================================
-# DATA9001 作业 2 参考代码：维多利亚州公寓投资分析
+# 数据分析示例代码
 # 思路：用"历史特征"训练一个线性回归模型，再把"预测特征"喂进模型，
 #       预测下一年各 suburb 的公寓价格，从而给出投资推荐。
 # 说明：下面的注释解释每一步"为什么这样做"，方便学习者理解取舍。
@@ -8,14 +8,14 @@
 library(tidyverse)  # readr 读数据、dplyr 处理数据、ggplot2 画图都在其中
 
 # ---------- 1. 读取并清洗公寓价格（标签/被解释变量）----------
-prices <- read_csv("Data/Apartment_prices.csv", show_col_types = FALSE) %>%
+prices <- read_csv("Data/d01.csv", show_col_types = FALSE) %>%
   # NORLANE 的价格被错误录成 "309334x"（数字里混进了字母 x）。
   # parse_number() 会自动抽出其中的数字 309334：
   # 这是"格式错误"而非"缺失"，所以修正格式即可，不必删掉整行、白白损失一个样本。
   mutate(Median_price_2023 = parse_number(Median_price_2023))
 
 # ---------- 2. 读取并清洗历史人口/经济特征 ----------
-hist <- read_csv("Data/Historical_demographic.csv", show_col_types = FALSE) %>%
+hist <- read_csv("Data/d02.csv", show_col_types = FALSE) %>%
   mutate(
     # POINT LONSDALE 的历史收入缺失。全表只有这一个缺失值，
     # 用中位数填补：中位数对极端值稳健，而且"用典型水平代替缺失"容易解释。
@@ -32,7 +32,7 @@ hist <- read_csv("Data/Historical_demographic.csv", show_col_types = FALSE) %>%
 # ---------- 3. 用"完全相同"的规则清洗预测特征 ----------
 # 关键：预测数据代表"下一年的特征"，只能在最后 predict 时使用，绝不能混入训练，
 # 否则会造成数据泄漏。清洗规则必须与历史数据一致，否则训练/预测口径不统一。
-proj <- read_csv("Data/Projected_demographic.csv", show_col_types = FALSE) %>%
+proj <- read_csv("Data/d03.csv", show_col_types = FALSE) %>%
   mutate(
     Projected_median_income = replace_na(
       Projected_median_income,

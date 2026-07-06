@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /assets/
+Disallow: /README.md
+Disallow: /notes.md
+Disallow: /sync.sh
