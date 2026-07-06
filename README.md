@@ -17,3 +17,5 @@ Republish from this directory after local content changes:
 ```
 
 The script creates the public repository if needed, pushes the local `main` branch, and enables GitHub Pages from the repository root.
+
+The downloadable `assets/reference-answer.tex` is self-contained (plot data and the R appendix are inlined), so it compiles standalone on Overleaf with no external files. The `assets/a2-analysis-code.R` download is the Chinese-annotated teaching version shown in the R tab.
