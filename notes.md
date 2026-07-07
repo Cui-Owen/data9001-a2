@@ -36,6 +36,9 @@ Date: 2026-07-06
 - Recommendation is intentionally placed at the end of Model Interpretation,
   after data handling, model estimation, coefficient interpretation, and
   projected-data prediction.
+- The three main reference-answer cards include step-by-step decision flows so
+  students can follow the order of data cleaning, modelling, interpretation,
+  prediction, and final recommendation.
 - Mobile viewport target: 390px wide, no horizontal overflow expected.
 
 ## Publishing notes

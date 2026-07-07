@@ -91,6 +91,11 @@ window.MathJax = {
   .reference-intro { border-left:3px solid var(--accent); border-radius:0 8px 8px 0; }
   .section-list { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
   .section-list span { border:1px solid var(--border); background:var(--surface-2); border-radius:999px; padding:4px 10px; font-size:12px; font-weight:800; color:var(--muted); }
+  .decision-flow { display:grid; gap:10px; margin:14px 0 16px; }
+  .decision-step { border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; background:var(--surface-2); padding:11px 13px; }
+  .decision-step strong { display:block; margin-bottom:3px; line-height:1.35; }
+  .decision-step span { display:block; color:var(--muted); font-size:13.5px; line-height:1.55; }
+  .mini-note { background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:0 6px 6px 0; padding:10px 14px; margin:12px 0; color:var(--text); }
   .stat-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:12px 0 16px; }
   .stat-grid div { background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px; }
   .stat-grid span { display:block; color:var(--muted); font-size:12px; }
@@ -262,45 +267,90 @@ window.MathJax = {
 
     <section class="q-card" id="clean">
       <div class="q-head"><span class="q-chip">1. Data Summary</span><div><h2>先把三个表合并并清洗错误输入</h2><p>清洗必须能被图和文字解释，而不是只藏在代码里。</p></div><span class="marks">5 marks</span></div>
+      <h3>操作顺序</h3>
+      <div class="decision-flow">
+        <div class="decision-step"><strong>Step 1: 先确认三张表能不能正确合并</strong><span>三张数据都以 <code>Suburb_name</code> 作为 suburb 层面的 key。先检查重复 suburb 和行数，再用 inner join 合并。合并后仍保留 458 个 suburbs，说明没有因为 key 不匹配而丢行。</span></div>
+        <div class="decision-step"><strong>Step 2: 把价格列转成真正的数值变量</strong><span><code>Median_price_2023</code> 是模型的 dependent variable，必须是 numeric。NORLANE 的 <code>309334x</code> 是明显输入错误，数字部分清楚，所以提取为 309,334，而不是删除整行。</span></div>
+        <div class="decision-step"><strong>Step 3: 处理历史收入缺失值</strong><span><code>POINT LONSDALE</code> 的 historical median income 缺失。因为只有一个缺失值，采用 historical income median 填补，理由是中位数比均值更不容易被高收入 suburb 拉动。</span></div>
+        <div class="decision-step"><strong>Step 4: 统一修正不可能的失业率</strong><span>失业率不能小于 0，所以 historical 和 projected unemployment 都用同一规则 <code>pmax(rate, 0)</code> 处理。这样训练数据和预测数据保持同一口径。</span></div>
+        <div class="decision-step"><strong>Step 5: 识别极端价格 outlier</strong><span><code>MAFFRA</code> 的价格为 4,202,660，远高于其他 suburb，会强烈影响回归线。这里不是随意删除，而是把它作为训练回归时的 outlier 排除，并在报告中解释原因。</span></div>
+        <div class="decision-step"><strong>Step 6: 为模型准备清晰变量口径</strong><span>把收入缩放成 <code>Income10k</code>，把 priority growth area 处理成 binary variable，把清洗后的失业率命名为 <code>UnemploymentClean</code>。这样模型公式更容易解释。</span></div>
+      </div>
       <div class="stat-grid">
         <div><span>合并后 suburbs</span><strong>458</strong></div>
         <div><span>NORLANE price</span><strong>309,334</strong></div>
         <div><span>负失业率修正</span><strong>22+22</strong></div>
         <div><span>训练样本</span><strong>457</strong></div>
       </div>
+      <h3>关键清洗决定</h3>
       <table><thead><tr><th>问题</th><th>处理</th><th>理由</th></tr></thead><tbody>
         <tr><td>NORLANE 的价格为 309334x</td><td>用 parse_number 提取 309334</td><td>数字部分清楚，是格式错误，不应整行删除</td></tr>
         <tr><td>POINT LONSDALE 历史收入缺失</td><td>用历史收入中位数填补</td><td>只有一个缺失值，中位数稳健且容易解释</td></tr>
         <tr><td>失业率出现负值</td><td>用 pmax(rate, 0) 修正为 0</td><td>失业率不能小于 0，保留“低失业”信息</td></tr>
         <tr><td>MAFFRA = 4,202,660</td><td>训练回归时剔除</td><td>远高于第二高价格，会强烈拉动回归线</td></tr>
       </tbody></table>
+      <div class="mini-note"><strong>报告写法：</strong>Data Summary 不需要把所有代码细节写进去，但要清楚说明“发现了哪些数据问题、如何处理、为什么这样处理”，并用至少一张图支持清洗判断，例如价格分布图或 outlier boxplot。</div>
     </section>
 
     <section class="q-card" id="model">
       <div class="q-head"><span class="q-chip">2. Model Estimation</span><div><h2>用历史特征估计 log price 线性模型</h2><p>Projected data 只用于预测下一年，不混入训练。</p></div><span class="marks">5 marks</span></div>
+      <h3>建模决定</h3>
+      <div class="decision-flow">
+        <div class="decision-step"><strong>Step 1: 明确 dependent variable</strong><span>题目要预测下一年 apartment investment location，但模型训练阶段能观察到的 label 是 <code>Median_price_2023</code>。因此先用历史 demographic variables 解释 2023 median apartment price。</span></div>
+        <div class="decision-step"><strong>Step 2: 对价格取 log</strong><span>价格是正数，并且分布右偏。用 <code>log(Price)</code> 可以减弱极端价格对模型的影响，也让系数可以近似解释为百分比变化。</span></div>
+        <div class="decision-step"><strong>Step 3: 只用 historical data 估计模型</strong><span>Historical demographic data 是 training features；projected demographic data 是 next-year feature data，只能在模型估计完成后用于 prediction。把 projected data 混进训练会造成逻辑错误。</span></div>
+        <div class="decision-step"><strong>Step 4: 保持变量口径一致</strong><span>训练和预测都使用 population growth、income、unemployment、priority growth area 四类信息。收入除以 10,000 变成 <code>Income10k</code>，是为了让 coefficient 的单位更容易解释。</span></div>
+        <div class="decision-step"><strong>Step 5: 用清洗后的 457 个 suburbs 拟合回归</strong><span>训练样本排除了极端价格 outlier MAFFRA。这样模型代表大多数 suburbs 的价格关系，而不是被一个异常点主导。</span></div>
+      </div>
+      <h3>估计的函数关系</h3>
       <div class="math-block">
 \[
 \log(Price_{2023})=\beta_0+\beta_1 PopulationGrowth+\beta_2 Income10k+\beta_3 UnemploymentClean+\beta_4 PriorityArea+\varepsilon
 \]
       </div>
-      <p>模型的 \(R^2\) 约为 <strong>0.523</strong>，说明这四个历史特征解释了约 <strong>52.3%</strong> 的 suburb 间 log price 差异。</p>
+      <table><thead><tr><th>模型元素</th><th>含义</th><th>为什么这样设定</th></tr></thead><tbody>
+        <tr><td>\(\log(Price_{2023})\)</td><td>2023 median apartment price 的 log</td><td>价格右偏，log 后更适合线性回归，也方便解释百分比变化</td></tr>
+        <tr><td>\(PopulationGrowth\)</td><td>历史人口增长率</td><td>需求增长通常会推高住房价格</td></tr>
+        <tr><td>\(Income10k\)</td><td>历史 median income 除以 10,000</td><td>缩放后 coefficient 表示收入每增加 10,000 的价格变化</td></tr>
+        <tr><td>\(UnemploymentClean\)</td><td>修正后的历史失业率</td><td>劳动力市场较弱可能降低 housing demand</td></tr>
+        <tr><td>\(PriorityArea\)</td><td>是否 priority growth area</td><td>政策和开发重点区域可能有价格溢价</td></tr>
+      </tbody></table>
+      <h3>回归结果怎么读</h3>
+      <p>模型的 \(R^2\) 约为 <strong>0.523</strong>，说明这四个历史特征解释了约 <strong>52.3%</strong> 的 suburb 间 log price 差异。它不是完美预测器，但对这个作业来说已经能提供一个有解释力的 screening model。</p>
       <table><thead><tr><th>Variable</th><th>Coefficient</th><th>Std. err.</th><th>t</th><th>approx. p</th></tr></thead><tbody><tr><td>Intercept</td><td>11.333</td><td>0.080</td><td>140.89</td><td>0.0000</td></tr>
 <tr><td>Population growth</td><td>0.288</td><td>0.013</td><td>21.86</td><td>0.0000</td></tr>
 <tr><td>Income per \$10k</td><td>0.006</td><td>0.003</td><td>1.86</td><td>0.0628</td></tr>
 <tr><td>Cleaned unemployment</td><td>-0.036</td><td>0.004</td><td>-8.90</td><td>0.0000</td></tr>
 <tr><td>Priority growth area</td><td>0.380</td><td>0.035</td><td>10.74</td><td>0.0000</td></tr></tbody></table>
+      <div class="mini-note"><strong>报告写法：</strong>Model Estimation 要写清楚公式、变量选择和 transformation 理由。不要只贴回归表；要说明 projected data 是预测阶段使用的 feature data，不是训练数据。</div>
     </section>
 
     <section class="q-card" id="interpret">
       <div class="q-head"><span class="q-chip">3. Model Interpretation</span><div><h2>从系数解释走到 projected data 推荐</h2><p>先解释模型含义，再用未来特征数据推出最终投资建议。</p></div><span class="marks">5 marks</span></div>
+      <h3>解释顺序</h3>
+      <div class="decision-flow">
+        <div class="decision-step"><strong>Step 1: 先看 coefficient 的方向</strong><span>Population growth 和 priority growth area 是正系数，说明它们和更高价格相关；unemployment 是负系数，说明劳动力市场较弱的 suburb 价格更低。</span></div>
+        <div class="decision-step"><strong>Step 2: 再看统计证据强不强</strong><span>Population growth、unemployment、priority growth area 的 p-value 很小，统计证据强。Income 的 p-value 约 0.063，方向为正，但证据较弱，报告中不能过度解释。</span></div>
+        <div class="decision-step"><strong>Step 3: 把 log coefficient 翻译成经济含义</strong><span>因为 dependent variable 是 log price，系数可以用 \(e^\beta-1\) 转成大约百分比变化，这样比只说“正相关/负相关”更有解释力。</span></div>
+        <div class="decision-step"><strong>Step 4: 用 projected data 预测下一年</strong><span>把 projected demographic data 改成和 training features 一样的变量口径，套入 fitted model 得到 predicted 2024 price，再和 current price 比较。</span></div>
+        <div class="decision-step"><strong>Step 5: 先定义 best，再给 recommendation</strong><span>如果 best 定义为最高预测价格，DROUIN 排第一；如果 best 定义为价格水平和上行空间的平衡，SEAFORD 更合理。报告必须把这个判断标准讲清楚。</span></div>
+      </div>
+      <h3>系数解释</h3>
       <div class="math-block">
 \[
 e^{0.288}-1=33.4\%,\qquad e^{0.380}-1=46.2\%
 \]
       </div>
       <p>人口增长系数为正且证据很强，说明需求扩张与更高价格相关。清洗后失业率系数为负，说明劳动力市场较弱的 suburb 价格更低。Priority growth area 的系数对应约 46.2% 的价格溢价。收入方向为正，但统计证据较弱，报告里要诚实说明。</p>
+      <table><thead><tr><th>变量</th><th>统计解释</th><th>经济解释</th><th>报告中怎么说</th></tr></thead><tbody>
+        <tr><td>Population growth</td><td>正系数，p-value 很小</td><td>人口增长越快，住房需求越强，价格通常越高</td><td>这是推荐时最重要的需求侧证据之一</td></tr>
+        <tr><td>Income per \$10k</td><td>正系数，但 p-value 约 0.063</td><td>收入较高可能支持更高价格，但证据不够强</td><td>可以保留在模型中，但不要把推荐主要建立在收入上</td></tr>
+        <tr><td>Cleaned unemployment</td><td>负系数，p-value 很小</td><td>失业率高代表本地经济较弱，价格压力更大</td><td>解释为什么低失业 suburb 更有吸引力</td></tr>
+        <tr><td>Priority growth area</td><td>正系数，p-value 很小</td><td>priority area 可能有开发和政策溢价</td><td>可作为支持 suburb 长期投资吸引力的证据</td></tr>
+      </tbody></table>
       <h3>Projected data 预测结果</h3>
-      <p>把 fitted model 应用到 projected demographic data 后，需要先说明 best 的标准。价格水平和投资上行空间会给出不同排序，因此这里先展示两个视角，再给出最终推荐。</p>
+      <p>预测阶段不是重新估计模型，而是把 projected population growth、projected median income、projected unemployment 和 projected priority growth area 改成同样变量口径后放入 fitted model。之后计算两个结果：预测价格水平，以及相对当前价格的 predicted uplift。</p>
+      <div class="mini-note"><strong>为什么要展示两个视角：</strong>最高预测价格代表未来售价水平；predicted uplift 代表相对当前价格的上行空间。只看其中一个都可能偏：低价 suburb 的百分比涨幅容易被放大，高价 suburb 的绝对价格也未必代表最好投资机会。</div>
       <h3>按最高预测价格水平</h3>
       <table><thead><tr><th>Suburb</th><th>Current price</th><th>Predicted 2024 price</th><th>Predicted uplift</th></tr></thead><tbody><tr><td>DROUIN</td><td>667,824</td><td>992,801</td><td>48.7%</td></tr>
 <tr><td>SEAFORD</td><td>490,411</td><td>951,068</td><td>93.9%</td></tr>
@@ -319,6 +369,7 @@ e^{0.288}-1=33.4\%,\qquad e^{0.380}-1=46.2\%
       <div class="answer-line">主推荐：SEAFORD。它预测价格为 951,068，相对当前 490,411 的上行空间约 93.9%，且 projected population growth 约 8.86%。DROUIN 是最高预测价格水平的备选。</div>
       <h3>Model limitations</h3>
       <p>限制要和本题数据有关：遗漏变量如交通、学校、开发限制和 suburb amenity 可能同时影响价格和人口增长；价格分布很分散，可能存在异方差；projected demographic data 本身也有预测误差。因此模型应解释为 association 和 screening tool，而不是因果证明。</p>
+      <div class="mini-note"><strong>报告写法：</strong>Model Interpretation 的最后才给 recommendation。顺序应是：解释系数方向和显著性，说明经济意义，用 projected data 得到预测，再基于明确的 best 标准选择 suburb。</div>
     </section>
 
     <section class="panel" id="charts">
