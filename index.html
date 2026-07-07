@@ -48,6 +48,8 @@ window.MathJax = {
   .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
   .toolbar { max-width:1240px; margin:0 auto; padding:18px 24px 0; }
   .download-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .download-group { display:flex; gap:8px; flex-wrap:wrap; align-items:center; border:1px solid var(--border); background:var(--surface); border-radius:8px; padding:8px; }
+  .download-label { color:var(--muted); font-size:12px; font-weight:800; padding:0 4px; }
   .download-btn { display:inline-flex; align-items:center; gap:8px; min-height:36px; padding:8px 13px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); text-decoration:none; font-size:13px; font-weight:650; }
   .download-btn.primary { background:var(--accent); color:white; border-color:var(--accent); }
   .layout { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:250px minmax(0,1fr); gap:36px; padding:28px 24px 48px; }
@@ -78,11 +80,17 @@ window.MathJax = {
   .sample-action { display:flex; flex-wrap:wrap; gap:10px; margin:12px 0 16px; }
   .sample-action .download-btn { background:var(--surface-2); }
   .sample-action .download-btn.primary { background:var(--accent); color:white; border-color:var(--accent); }
+  .sample-guide { border-left:3px solid var(--blue); border-radius:0 8px 8px 0; }
+  .sample-guide details { border:1px solid var(--border); border-radius:8px; background:var(--surface-2); padding:10px 12px; margin-top:12px; }
+  .sample-guide summary { cursor:pointer; font-weight:800; color:var(--accent); }
   .callout-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:14px 0; }
   .callout { border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; background:var(--surface-2); padding:12px 14px; }
   .callout.warn { border-left-color:var(--warn); background:var(--warn-soft); }
   .callout strong { display:block; margin-bottom:4px; }
   .callout span { display:block; color:var(--muted); font-size:13px; line-height:1.5; }
+  .reference-intro { border-left:3px solid var(--accent); border-radius:0 8px 8px 0; }
+  .section-list { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .section-list span { border:1px solid var(--border); background:var(--surface-2); border-radius:999px; padding:4px 10px; font-size:12px; font-weight:800; color:var(--muted); }
   .stat-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:12px 0 16px; }
   .stat-grid div { background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px; }
   .stat-grid span { display:block; color:var(--muted); font-size:12px; }
@@ -140,7 +148,9 @@ window.MathJax = {
     .tab { border:1px solid var(--border); border-radius:6px; padding:9px 8px; text-align:center; background:var(--surface-2); border-bottom-color:var(--border); }
     .tab.active { background:var(--accent-soft); border-color:var(--accent); }
     .toolbar { padding:14px 16px 0; }
-    .download-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .download-row { display:grid; grid-template-columns:1fr; gap:8px; }
+    .download-group { display:grid; grid-template-columns:1fr; gap:8px; align-items:stretch; }
+    .download-label { text-align:center; }
     .download-btn { justify-content:center; text-align:center; padding:8px 10px; }
     .layout { padding:18px 16px 40px; }
     .view { display:none; }
@@ -184,11 +194,17 @@ window.MathJax = {
 </header>
 <div class="toolbar">
   <div class="download-row">
-    <a class="download-btn primary" href="assets/m01.pdf" download rel="nofollow">下载 PDF</a>
-    <a class="download-btn" href="assets/m03.pdf" download rel="nofollow">下载Sample</a>
-    <a class="download-btn" href="assets/m01.tex" download rel="nofollow">下载 LaTeX</a>
-    <a class="download-btn" href="assets/m02.R" download rel="nofollow">下载 R 代码</a>
-    <a class="download-btn" href="assets/d01.csv" download rel="nofollow">下载价格数据</a>
+    <div class="download-group" aria-label="主材料">
+      <span class="download-label">主材料</span>
+      <a class="download-btn primary" href="assets/m01.pdf" download rel="nofollow">下载 PDF</a>
+      <a class="download-btn" href="assets/m03.pdf" download rel="nofollow">下载Sample</a>
+    </div>
+    <div class="download-group" aria-label="复现材料">
+      <span class="download-label">复现材料</span>
+      <a class="download-btn" href="assets/m02.R" download rel="nofollow">下载 R 代码</a>
+      <a class="download-btn" href="assets/d01.csv" download rel="nofollow">下载价格数据</a>
+      <a class="download-btn" href="assets/m01.tex" download rel="nofollow">下载 LaTeX</a>
+    </div>
   </div>
 </div>
 
@@ -196,45 +212,56 @@ window.MathJax = {
   <nav class="toc">
     <p class="toc-title">Contents</p>
     <a href="#read">阅读建议</a>
-    <a href="#sample">Sample</a>
-    <a href="#clean">数据清洗</a>
-    <a href="#model">模型估计</a>
-    <a href="#interpret">模型解释</a>
-    <a href="#recommend">投资推荐</a>
-    <a href="#charts">报告配图</a>
-    <a href="#limits">限制与报告写法</a>
+    <a href="#sample">Sample 怎么用</a>
+    <a href="#reference-answer">Reference Answer</a>
+    <a href="#clean">1. Data Summary</a>
+    <a href="#model">2. Model Estimation</a>
+    <a href="#interpret">3. Model Interpretation</a>
+    <a href="#charts">Figure Planning</a>
+    <a href="#toolkit">Writing Toolkit</a>
   </nav>
   <main>
     <section class="notice" id="read">
-      <div><strong>怎么读</strong><p>先看每一步为什么做，再看代码怎么写。不要直接复制推荐 suburb，而要理解推荐标准。</p></div>
-      <div><strong>核心结论</strong><p>最高预测价格水平是 DROUIN；按投资上行空间和市场合理性，主推荐是 SEAFORD。</p></div>
+      <div><strong>怎么读</strong><p>先看每一步为什么做，再看代码怎么写。结论放在最后，由清洗、建模和 projected data 自然推出。</p></div>
+      <div><strong>学习重点</strong><p>本页重点不是记住某个 suburb，而是学会如何把数据问题、模型选择、系数解释和推荐逻辑连成一条证据链。</p></div>
     </section>
 
-    <section class="q-card" id="sample">
-      <div class="q-head"><span class="q-chip">Sample</span><div><h2>Sample 值得学的是答题逻辑，不是照抄格式</h2><p>Sample 更像完整分析展示，A2 正文仍要压缩到 450-550 字。</p></div><span class="marks">reference</span></div>
+    <section class="panel sample-guide" id="sample">
+      <span class="section-kicker">Supplement</span>
+      <h2>Sample 怎么用</h2>
+      <p>Sample 是辅助材料，用来学习论证方式和报告节奏；下面的 Reference Answer 才是本站的正式参考主线。</p>
       <div class="sample-action">
         <a class="download-btn primary" href="assets/m03.pdf" download rel="nofollow">下载Sample PDF</a>
-        <a class="download-btn" href="#charts">跳到配图建议</a>
+        <a class="download-btn" href="#reference-answer">进入 Reference Answer</a>
       </div>
       <div class="callout-grid">
-        <div class="callout"><strong>可以学</strong><span>它先给出投资结论，再用数据清洗、图表、模型和预测结果把结论支撑起来。这种“结论先行、证据跟上”的结构适合商业报告。</span></div>
+        <div class="callout"><strong>可以学</strong><span>它把数据清洗、图表、模型、预测和投资建议串成完整叙事，适合用来理解报告的证据链。</span></div>
         <div class="callout warn"><strong>不要照搬</strong><span>它篇幅远超 500 字，也有多重推荐标准和一些不够严谨的处理。我们的报告要更短、更聚焦，只保留能拿分的论证链。</span></div>
       </div>
-      <table><thead><tr><th>Sample 的做法</th><th>我们应该怎么学</th><th>落到 A2 报告里怎么写</th></tr></thead><tbody>
-        <tr><td>开头直接列出推荐 suburb 和投资指标</td><td>先让读者知道最终判断，再解释为什么</td><td>第一段或解释部分明确写：I recommend SEAFORD because it combines high predicted price with strong predicted uplift.</td></tr>
-        <tr><td>把错误字符、缺失值、负失业率和 outlier 单独说明</td><td>清洗不是代码细节，而是 data summary 的得分点</td><td>用 2-3 句说明 NORLANE、POINT LONSDALE、negative unemployment、MAFFRA 的处理和理由。</td></tr>
-        <tr><td>用分布图、散点图、相关矩阵支持决策</td><td>每张图都要服务一个判断：为什么清洗、为什么放入变量、为什么推荐该 suburb</td><td>正文提 2-3 张关键图：价格分布图解释 log/outlier，scatter plot 解释人口增长，推荐图解释候选 suburb。</td></tr>
-        <tr><td>比较 base model、reduced model 和 transformed model</td><td>模型选择要有依据，不能只报一个回归结果</td><td>简短写：I compared the full model with a log-price specification; log price was preferred because prices were right-skewed and coefficients were easier to interpret.</td></tr>
-        <tr><td>明确写出回归函数关系</td><td>这是题目明示要求，也是 model estimation 的核心</td><td>必须写出 \( \log(Price)=\beta_0+\beta_1Growth+\beta_2Income+\beta_3Unemployment+\beta_4Priority+\varepsilon \)。</td></tr>
-        <tr><td>解释系数时同时说显著性和经济含义</td><td>不要只写 p-value；要说明变量变化对价格意味着什么</td><td>例如：population growth is statistically strong and economically large; unemployment is negative, consistent with weaker demand.</td></tr>
-        <tr><td>用 projected data 生成下一年预测</td><td>历史数据用于训练，未来预测表用于推荐，这是题目的关键逻辑</td><td>写清楚：The fitted model was applied to the projected demographic variables to predict 2024 prices.</td></tr>
-        <tr><td>最后讨论 Gauss-Markov 限制</td><td>限制不是套话，要和本题数据有关</td><td>提遗漏变量、线性假设、异方差、预测数据误差，以及相关不等于因果。</td></tr>
-      </tbody></table>
-      <div class="answer-line">写作策略：学 Sample 的“清洗证据 -> 模型选择 -> 系数解释 -> projected data 推荐”这条链；不要学它的超长篇幅、多个并列投资目标和过度展开。</div>
+      <details>
+        <summary>展开：Sample 可借鉴点</summary>
+        <table><thead><tr><th>Sample 的做法</th><th>我们应该怎么学</th><th>落到 A2 报告里怎么写</th></tr></thead><tbody>
+          <tr><td>把推荐建立在前面分析之后</td><td>先搭证据，再给结论，避免一开始就像拍脑袋选 suburb</td><td>在 Model Interpretation 的最后用 projected data 推出 recommendation。</td></tr>
+          <tr><td>把错误字符、缺失值、负失业率和 outlier 单独说明</td><td>清洗不是代码细节，而是 Data Summary 的得分点</td><td>用 2-3 句说明 NORLANE、POINT LONSDALE、negative unemployment、MAFFRA 的处理和理由。</td></tr>
+          <tr><td>用分布图、散点图、相关矩阵支持决策</td><td>每张图都要服务一个判断：为什么清洗、为什么放入变量、为什么推荐该 suburb</td><td>正文提 2-3 张关键图：价格分布图解释 log/outlier，scatter plot 解释人口增长，推荐图解释候选 suburb。</td></tr>
+          <tr><td>比较 base model、reduced model 和 transformed model</td><td>模型选择要有依据，不能只报一个回归结果</td><td>简短写：I compared the full model with a log-price specification; log price was preferred because prices were right-skewed and coefficients were easier to interpret.</td></tr>
+          <tr><td>明确写出回归函数关系</td><td>这是题目明示要求，也是 Model Estimation 的核心</td><td>必须写出 \( \log(Price)=\beta_0+\beta_1Growth+\beta_2Income+\beta_3Unemployment+\beta_4Priority+\varepsilon \)。</td></tr>
+          <tr><td>解释系数时同时说显著性和经济含义</td><td>不要只写 p-value；要说明变量变化对价格意味着什么</td><td>例如：population growth is statistically strong and economically large; unemployment is negative, consistent with weaker demand.</td></tr>
+          <tr><td>用 projected data 生成下一年预测</td><td>历史数据用于训练，未来预测表用于推荐，这是题目的关键逻辑</td><td>写清楚：The fitted model was applied to the projected demographic variables to predict 2024 prices.</td></tr>
+          <tr><td>最后讨论 Gauss-Markov 限制</td><td>限制不是套话，要和本题数据有关</td><td>提遗漏变量、线性假设、异方差、预测数据误差，以及相关不等于因果。</td></tr>
+        </tbody></table>
+      </details>
+    </section>
+
+    <section class="panel reference-intro" id="reference-answer">
+      <span class="section-kicker">Reference Answer</span>
+      <h2>正式参考答案按评分标准阅读</h2>
+      <p>下面三段对应 marking guide 的三个评分项。结论不会提前给出，而是在第 3 部分根据模型和 projected data 推出。</p>
+      <div class="section-list"><span>1. Data Summary</span><span>2. Model Estimation</span><span>3. Model Interpretation</span></div>
     </section>
 
     <section class="q-card" id="clean">
-      <div class="q-head"><span class="q-chip">Data summary</span><div><h2>先把三个表合并并清洗错误输入</h2><p>清洗必须能被图和文字解释，而不是只藏在代码里。</p></div><span class="marks">5 marks</span></div>
+      <div class="q-head"><span class="q-chip">1. Data Summary</span><div><h2>先把三个表合并并清洗错误输入</h2><p>清洗必须能被图和文字解释，而不是只藏在代码里。</p></div><span class="marks">5 marks</span></div>
       <div class="stat-grid">
         <div><span>合并后 suburbs</span><strong>458</strong></div>
         <div><span>NORLANE price</span><strong>309,334</strong></div>
@@ -250,7 +277,7 @@ window.MathJax = {
     </section>
 
     <section class="q-card" id="model">
-      <div class="q-head"><span class="q-chip">Model</span><div><h2>用历史特征估计 log price 线性模型</h2><p>Projected data 只用于预测下一年，不混入训练。</p></div><span class="marks">5 marks</span></div>
+      <div class="q-head"><span class="q-chip">2. Model Estimation</span><div><h2>用历史特征估计 log price 线性模型</h2><p>Projected data 只用于预测下一年，不混入训练。</p></div><span class="marks">5 marks</span></div>
       <div class="math-block">
 \[
 \log(Price_{2023})=\beta_0+\beta_1 PopulationGrowth+\beta_2 Income10k+\beta_3 UnemploymentClean+\beta_4 PriorityArea+\varepsilon
@@ -265,17 +292,15 @@ window.MathJax = {
     </section>
 
     <section class="q-card" id="interpret">
-      <div class="q-head"><span class="q-chip">Interpretation</span><div><h2>解释系数时同时讲经济意义和统计意义</h2><p>不要只写 significant，也不要只写正负号。</p></div><span class="marks">5 marks</span></div>
+      <div class="q-head"><span class="q-chip">3. Model Interpretation</span><div><h2>从系数解释走到 projected data 推荐</h2><p>先解释模型含义，再用未来特征数据推出最终投资建议。</p></div><span class="marks">5 marks</span></div>
       <div class="math-block">
 \[
 e^{0.288}-1=33.4\%,\qquad e^{0.380}-1=46.2\%
 \]
       </div>
       <p>人口增长系数为正且证据很强，说明需求扩张与更高价格相关。清洗后失业率系数为负，说明劳动力市场较弱的 suburb 价格更低。Priority growth area 的系数对应约 46.2% 的价格溢价。收入方向为正，但统计证据较弱，报告里要诚实说明。</p>
-    </section>
-
-    <section class="q-card" id="recommend">
-      <div class="q-head"><span class="q-chip">Recommendation</span><div><h2>推荐前先说清楚 best 的标准</h2><p>价格水平和投资上行空间会给出不同排序。</p></div><span class="marks">decision</span></div>
+      <h3>Projected data 预测结果</h3>
+      <p>把 fitted model 应用到 projected demographic data 后，需要先说明 best 的标准。价格水平和投资上行空间会给出不同排序，因此这里先展示两个视角，再给出最终推荐。</p>
       <h3>按最高预测价格水平</h3>
       <table><thead><tr><th>Suburb</th><th>Current price</th><th>Predicted 2024 price</th><th>Predicted uplift</th></tr></thead><tbody><tr><td>DROUIN</td><td>667,824</td><td>992,801</td><td>48.7%</td></tr>
 <tr><td>SEAFORD</td><td>490,411</td><td>951,068</td><td>93.9%</td></tr>
@@ -292,10 +317,14 @@ e^{0.288}-1=33.4\%,\qquad e^{0.380}-1=46.2\%
 <tr><td>TEMPLESTOWE</td><td>112,749</td><td>269,466</td><td>139.0%</td></tr>
 <tr><td>IRYMPLE</td><td>116,905</td><td>263,180</td><td>125.1%</td></tr></tbody></table>
       <div class="answer-line">主推荐：SEAFORD。它预测价格为 951,068，相对当前 490,411 的上行空间约 93.9%，且 projected population growth 约 8.86%。DROUIN 是最高预测价格水平的备选。</div>
+      <h3>Model limitations</h3>
+      <p>限制要和本题数据有关：遗漏变量如交通、学校、开发限制和 suburb amenity 可能同时影响价格和人口增长；价格分布很分散，可能存在异方差；projected demographic data 本身也有预测误差。因此模型应解释为 association 和 screening tool，而不是因果证明。</p>
     </section>
 
-    <section class="q-card" id="charts">
-      <div class="q-head"><span class="q-chip">Visual support</span><div><h2>还可以做哪些图来支持 report</h2><p>每张图都要回答一个报告问题：为什么清洗、为什么建模、为什么这样推荐。</p></div><span class="marks">ideas</span></div>
+    <section class="panel" id="charts">
+      <span class="section-kicker">Figure Planning</span>
+      <h2>配图选择指南</h2>
+      <p>这部分不是额外答案，而是帮助你决定哪些图放正文、哪些图放附录。</p>
       <div class="idea-grid">
         <div class="idea-item"><strong>价格分布直方图</strong><span>支持 data summary：说明价格右偏、MAFFRA 是极端值，也解释为什么用 log price。</span></div>
         <div class="idea-item"><strong>人口增长 vs 价格散点图</strong><span>支持 model estimation：展示人口增长和价格大致正相关，为纳入变量提供直观理由。</span></div>
@@ -329,9 +358,16 @@ e^{0.288}-1=33.4\%,\qquad e^{0.380}-1=46.2\%
       </div>
     </section>
 
-    <section class="q-card" id="limits">
-      <div class="q-head"><span class="q-chip">Report writing</span><div><h2>最后把技术过程压缩成 500 字报告</h2><p>正文讲逻辑，代码放附录。</p></div></div>
-      <p>Data summary 写合并、清洗和图形证据；Model Estimation 写函数关系和变量选择；Model interpretation 写系数方向、大小、证据、预测和推荐。限制要包括遗漏变量、线性假设、异方差风险、预测数据误差，以及相关不等于因果。</p>
+    <section class="panel" id="toolkit">
+      <span class="section-kicker">Writing Toolkit</span>
+      <h2>把技术过程压缩成 500 字报告</h2>
+      <p>正文讲逻辑，代码放附录；不要把所有探索过程都塞进正文。</p>
+      <table><thead><tr><th>报告部分</th><th>正文应该写什么</th><th>可以放到附录/代码里的内容</th></tr></thead><tbody>
+        <tr><td>1. Data Summary</td><td>合并方式、关键数据问题、清洗理由、1-2 个图形证据</td><td>完整清洗代码、所有缺失值检查表、完整描述统计</td></tr>
+        <tr><td>2. Model Estimation</td><td>模型公式、变量选择理由、log/transform 的理由、核心回归结果</td><td>所有备选模型输出、长回归表、诊断细节</td></tr>
+        <tr><td>3. Model Interpretation</td><td>统计显著性、经济含义、projected data 预测、最终推荐、主要限制</td><td>完整排名表、额外图、robustness check</td></tr>
+      </tbody></table>
+      <div class="answer-line">写作顺序建议：先解释数据怎样变干净，再解释模型怎样估计，最后才从 projected data 推出 recommendation。</div>
     </section>
   </main>
 </div>

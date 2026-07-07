@@ -31,6 +31,11 @@ Date: 2026-07-06
 - Tabs checked: web answer, PDF, LaTeX source, R code, data files.
 - Web answer includes the Sample download and a section explaining what
   to learn from the sample report.
+- Web answer hierarchy separates supplement materials from the three-part
+  reference answer: Data Summary, Model Estimation, and Model Interpretation.
+- Recommendation is intentionally placed at the end of Model Interpretation,
+  after data handling, model estimation, coefficient interpretation, and
+  projected-data prediction.
 - Mobile viewport target: 390px wide, no horizontal overflow expected.
 
 ## Publishing notes
