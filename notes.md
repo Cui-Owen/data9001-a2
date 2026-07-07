@@ -8,6 +8,7 @@ Date: 2026-07-06
 - PDF: `assets/m01.pdf`
 - LaTeX source: `assets/m01.tex`
 - R source: `assets/m02.R`
+- Sample PDF: `assets/m03.pdf`
 - Data files:
   - `assets/d01.csv`
   - `assets/d02.csv`
@@ -28,6 +29,8 @@ Date: 2026-07-06
 - MathJax script present for web formula rendering.
 - PDF iframe points to `assets/m01.pdf`.
 - Tabs checked: web answer, PDF, LaTeX source, R code, data files.
+- Web answer includes the Sample download and a section explaining what
+  to learn from the sample report.
 - Mobile viewport target: 390px wide, no horizontal overflow expected.
 
 ## Publishing notes

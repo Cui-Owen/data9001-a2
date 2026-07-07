@@ -24,6 +24,7 @@ Public asset names are intentionally short:
 - `assets/m01.pdf`
 - `assets/m01.tex`
 - `assets/m02.R`
+- `assets/m03.pdf`
 - `assets/d01.csv`
 - `assets/d02.csv`
 - `assets/d03.csv`

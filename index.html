@@ -75,6 +75,14 @@ window.MathJax = {
   th { background:var(--accent-soft); color:var(--accent); font-weight:800; }
   .math-block { background:var(--surface-2); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:0 6px 6px 0; padding:10px 14px; overflow-x:auto; }
   .answer-line { background:var(--warn-soft); border-left:3px solid var(--warn); border-radius:0 6px 6px 0; padding:10px 14px; font-weight:700; margin:12px 0; }
+  .sample-action { display:flex; flex-wrap:wrap; gap:10px; margin:12px 0 16px; }
+  .sample-action .download-btn { background:var(--surface-2); }
+  .sample-action .download-btn.primary { background:var(--accent); color:white; border-color:var(--accent); }
+  .callout-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:14px 0; }
+  .callout { border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; background:var(--surface-2); padding:12px 14px; }
+  .callout.warn { border-left-color:var(--warn); background:var(--warn-soft); }
+  .callout strong { display:block; margin-bottom:4px; }
+  .callout span { display:block; color:var(--muted); font-size:13px; line-height:1.5; }
   .stat-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:12px 0 16px; }
   .stat-grid div { background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px; }
   .stat-grid span { display:block; color:var(--muted); font-size:12px; }
@@ -122,7 +130,7 @@ window.MathJax = {
   .axis-y { left:-24px; top:-20px; }
   footer { background:var(--surface); border-top:1px solid var(--border); color:var(--muted); padding:30px 24px; }
   footer .wrap { max-width:1240px; margin:0 auto; font-size:13px; }
-  @media (max-width:980px) { .layout { grid-template-columns:200px minmax(0,1fr); gap:22px; } .notice,.stat-grid,.source-grid,.step-grid,.idea-grid,.data-card-grid { grid-template-columns:1fr; } }
+  @media (max-width:980px) { .layout { grid-template-columns:200px minmax(0,1fr); gap:22px; } .notice,.stat-grid,.source-grid,.step-grid,.idea-grid,.data-card-grid,.callout-grid { grid-template-columns:1fr; } }
   @media (max-width:700px) {
     .header-inner { padding:20px 16px 0; }
     .brand-row { gap:12px; }
@@ -177,6 +185,7 @@ window.MathJax = {
 <div class="toolbar">
   <div class="download-row">
     <a class="download-btn primary" href="assets/m01.pdf" download rel="nofollow">下载 PDF</a>
+    <a class="download-btn" href="assets/m03.pdf" download rel="nofollow">下载Sample</a>
     <a class="download-btn" href="assets/m01.tex" download rel="nofollow">下载 LaTeX</a>
     <a class="download-btn" href="assets/m02.R" download rel="nofollow">下载 R 代码</a>
     <a class="download-btn" href="assets/d01.csv" download rel="nofollow">下载价格数据</a>
@@ -187,6 +196,7 @@ window.MathJax = {
   <nav class="toc">
     <p class="toc-title">Contents</p>
     <a href="#read">阅读建议</a>
+    <a href="#sample">Sample</a>
     <a href="#clean">数据清洗</a>
     <a href="#model">模型估计</a>
     <a href="#interpret">模型解释</a>
@@ -198,6 +208,29 @@ window.MathJax = {
     <section class="notice" id="read">
       <div><strong>怎么读</strong><p>先看每一步为什么做，再看代码怎么写。不要直接复制推荐 suburb，而要理解推荐标准。</p></div>
       <div><strong>核心结论</strong><p>最高预测价格水平是 DROUIN；按投资上行空间和市场合理性，主推荐是 SEAFORD。</p></div>
+    </section>
+
+    <section class="q-card" id="sample">
+      <div class="q-head"><span class="q-chip">Sample</span><div><h2>Sample 值得学的是答题逻辑，不是照抄格式</h2><p>Sample 更像完整分析展示，A2 正文仍要压缩到 450-550 字。</p></div><span class="marks">reference</span></div>
+      <div class="sample-action">
+        <a class="download-btn primary" href="assets/m03.pdf" download rel="nofollow">下载Sample PDF</a>
+        <a class="download-btn" href="#charts">跳到配图建议</a>
+      </div>
+      <div class="callout-grid">
+        <div class="callout"><strong>可以学</strong><span>它先给出投资结论，再用数据清洗、图表、模型和预测结果把结论支撑起来。这种“结论先行、证据跟上”的结构适合商业报告。</span></div>
+        <div class="callout warn"><strong>不要照搬</strong><span>它篇幅远超 500 字，也有多重推荐标准和一些不够严谨的处理。我们的报告要更短、更聚焦，只保留能拿分的论证链。</span></div>
+      </div>
+      <table><thead><tr><th>Sample 的做法</th><th>我们应该怎么学</th><th>落到 A2 报告里怎么写</th></tr></thead><tbody>
+        <tr><td>开头直接列出推荐 suburb 和投资指标</td><td>先让读者知道最终判断，再解释为什么</td><td>第一段或解释部分明确写：I recommend SEAFORD because it combines high predicted price with strong predicted uplift.</td></tr>
+        <tr><td>把错误字符、缺失值、负失业率和 outlier 单独说明</td><td>清洗不是代码细节，而是 data summary 的得分点</td><td>用 2-3 句说明 NORLANE、POINT LONSDALE、negative unemployment、MAFFRA 的处理和理由。</td></tr>
+        <tr><td>用分布图、散点图、相关矩阵支持决策</td><td>每张图都要服务一个判断：为什么清洗、为什么放入变量、为什么推荐该 suburb</td><td>正文提 2-3 张关键图：价格分布图解释 log/outlier，scatter plot 解释人口增长，推荐图解释候选 suburb。</td></tr>
+        <tr><td>比较 base model、reduced model 和 transformed model</td><td>模型选择要有依据，不能只报一个回归结果</td><td>简短写：I compared the full model with a log-price specification; log price was preferred because prices were right-skewed and coefficients were easier to interpret.</td></tr>
+        <tr><td>明确写出回归函数关系</td><td>这是题目明示要求，也是 model estimation 的核心</td><td>必须写出 \( \log(Price)=\beta_0+\beta_1Growth+\beta_2Income+\beta_3Unemployment+\beta_4Priority+\varepsilon \)。</td></tr>
+        <tr><td>解释系数时同时说显著性和经济含义</td><td>不要只写 p-value；要说明变量变化对价格意味着什么</td><td>例如：population growth is statistically strong and economically large; unemployment is negative, consistent with weaker demand.</td></tr>
+        <tr><td>用 projected data 生成下一年预测</td><td>历史数据用于训练，未来预测表用于推荐，这是题目的关键逻辑</td><td>写清楚：The fitted model was applied to the projected demographic variables to predict 2024 prices.</td></tr>
+        <tr><td>最后讨论 Gauss-Markov 限制</td><td>限制不是套话，要和本题数据有关</td><td>提遗漏变量、线性假设、异方差、预测数据误差，以及相关不等于因果。</td></tr>
+      </tbody></table>
+      <div class="answer-line">写作策略：学 Sample 的“清洗证据 -> 模型选择 -> 系数解释 -> projected data 推荐”这条链；不要学它的超长篇幅、多个并列投资目标和过度展开。</div>
     </section>
 
     <section class="q-card" id="clean">
